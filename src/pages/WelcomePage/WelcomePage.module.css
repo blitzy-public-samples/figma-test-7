@@ -14,8 +14,10 @@
  * globally in src/main.tsx — this file imports nothing). The ONLY untokenized
  * literals permitted are structural keywords (0, auto, 100%, 100vh, none,
  * block, flex, relative, absolute, column, row, wrap, center, flex-start,
- * normal) and the exact Figma pixel offsets that place the preview overlays /
- * arrows / annotations (see the clearly-marked offset block at the bottom).
+ * normal), the two preview base display widths (400px / 800px — the @2x
+ * screenshots' half-scale sizes), and the percentage offsets that place the
+ * preview overlays / arrows / annotations relative to those bases (see the
+ * scale-consistent coordinate system documented in the preview section).
  *
  * Responsibilities intentionally NOT owned here:
  *   - the hero gradient + cover padding  -> Header component
@@ -86,58 +88,128 @@
   align-items: flex-start;
 }
 
-/* Optional helper: separates the "Visit Plus UI's Figma Community Page" link
-   from the preview panel above it. Matches the Section body's default child
-   gap; omit its usage to fall back to that default instead. */
-.communityLink {
-  margin-top: var(--space-24);
-}
-
 /* ===== "Like & Follow" preview panel (raster stays raster, AAP section 0.8) =
-   The two preview regions are raster screenshots placed as <img>; the green
-   arrows and handwritten text are layered above via absolute positioning.
-   Their interior UI is NOT rebuilt as live DOM. */
+ * The two preview regions are raster screenshots placed as <img>; the cropped
+ * overlays, the hand-drawn green arrows, and the handwritten annotations are
+ * layered above them via absolute positioning. Their interior UI is NOT rebuilt
+ * as live DOM.
+ *
+ * SCALE-CONSISTENT COORDINATE SYSTEM
+ * ----------------------------------
+ * Both base screenshots are @2x raster exports shown at half their native size,
+ * so the whole group shares ONE 0.5 down-scale and the two bases tile the
+ * panel's 1248px inner width exactly:
+ *     LIKE base   800x800  native -> 400x400 display
+ *     FOLLOW base 1600x856 native -> 800x428 display
+ *     400 + 48 (gap) + 800 = 1248  (= 1344 outer - 48 - 48 padding)
+ * Every overlay / arrow / annotation is registered to its own .previewItem box
+ * and sized/placed in PERCENTAGES of that box (never native px), so each layer
+ * renders at the same 0.5 scale as its base and the two coordinate systems
+ * scale identically. Each overlay's width is its native width divided by the
+ * base's native width, which reproduces the exact 0.5 down-scale:
+ *     LIKE overlay   736 / 800   = 92%      (736x304 native  -> 368x152 display)
+ *     FOLLOW overlay 1692 / 1600 = 105.75%  (1692x863 native -> 846x431 display)
+ * The FOLLOW overlay is intentionally a hair wider than its base (a top-left
+ * near-full-bleed cover); its ~46px right overhang lands inside the panel's
+ * 48px right padding and never reaches the panel edge.
+ *
+ * The two per-instance geometries are selected STRUCTURALLY from .previewItem
+ * document order (first child = LIKE, last child = FOLLOW), because the consumer
+ * (WelcomePage.tsx) applies only the generic .previewOverlay / .previewArrow
+ * classes to both items; only the annotation carries a per-instance modifier
+ * (.annotationLike / .annotationFollow).
+ * ========================================================================== */
 
-/* Applied alongside .panel so it inherits the light-gray background, 48 padding
-   and 4 radius. Lays out the two preview groups. The exact direction / gap /
-   alignment are confirmed against Figma node 5845:45097 by the companion
-   WelcomePage.tsx pass; row + 48 gap is the working default. */
+/* Applied alongside .panel (inherits #F3F4F6 background, 48px padding, 4px
+   radius). Rows the two preview groups with the 48px inter-group gap; the two
+   items are sized to their bases (below) and sum to the 1248px inner width. */
 .previewPanel {
   display: flex;
+  flex-direction: row;
   gap: var(--space-48);
   align-items: flex-start;
 }
 
-/* Positioning context for one preview group's base + overlay + arrow +
-   annotation. */
+/* Positioning context for one preview group (base + overlay + arrow +
+   annotation). flex: 0 0 auto plus an explicit per-item width (below) fixes the
+   coordinate box so the absolute children resolve their percentages against the
+   base's exact display size. */
 .previewItem {
   position: relative;
+  flex: 0 0 auto;
+}
+
+/* LIKE group box: 800x800 native shown at half size. */
+.previewItem:first-child {
+  width: 400px;
+}
+
+/* FOLLOW group box: 1600x856 native shown at half size. */
+.previewItem:last-child {
+  width: 800px;
 }
 
 /* Base screenshot (screenshot_like_base.png / screenshot_follow_base.png).
-   display: block removes inline-image descender whitespace; max-width + height
-   keep the image within the panel and preserve its aspect ratio while
-   WelcomePage.tsx supplies the explicit width/height from Figma. */
+   display: block removes inline-image descender whitespace; width: 100% fills
+   the fixed .previewItem box and height: auto preserves the native aspect ratio
+   (LIKE -> 400x400, FOLLOW -> 800x428). */
 .previewImage {
   display: block;
-  max-width: 100%;
+  width: 100%;
   height: auto;
 }
 
-/* Cropped overlay images and hand-drawn arrows are taken out of flow and
-   registered to the .previewItem box; their exact placement lives in the
-   offset block below. */
+/* Cropped overlay screenshots — taken out of flow and registered to the
+   .previewItem box. The per-item rules below set width as the overlay-native /
+   base-native ratio so each overlay renders at the same 0.5 scale as its base;
+   height: auto preserves the overlay's own aspect ratio. */
 .previewOverlay {
   position: absolute;
+  height: auto;
 }
 
+/* LIKE overlay (screenshot_like_overlay-8b1b9b.png, 736x304 native): the zoomed
+   real listing that covers the file card's title + metadata band. */
+.previewItem:first-child .previewOverlay {
+  top: 8%;
+  left: 4%;
+  width: 92%;
+}
+
+/* FOLLOW overlay (screenshot_follow_overlay-30152e.png, 1692x863 native): a
+   top-left near-full-bleed cover of the profile base. */
+.previewItem:last-child .previewOverlay {
+  top: 0;
+  left: 0;
+  width: 105.75%;
+}
+
+/* Hand-drawn green arrows — out of flow, positioned by percentage of the base
+   so they keep pointing at their target button at the group's 0.5 scale. Each
+   SVG renders at its intrinsic design size (LIKE 72x49, FOLLOW 114x49). */
 .previewArrow {
   position: absolute;
 }
 
+/* LIKE arrow -> the red-heart "like" button (button center ~56% across / ~56%
+   down the 400x400 base); the arrowhead meets the button from above-right. */
+.previewItem:first-child .previewArrow {
+  top: 52%;
+  left: 56%;
+}
+
+/* FOLLOW arrow -> the blue "Follow" button (button center ~6% across / ~28%
+   down the 800x428 base); the arrow's lower-left head lands on the button while
+   its body sweeps up-right. */
+.previewItem:last-child .previewArrow {
+  top: 17%;
+  left: 8%;
+}
+
 /* Handwritten annotation base ("like!" / "follow"): Bubblegum Sans, regular
-   weight, accent green, out of flow. Per-instance size + placement follow in
-   the offset block below. */
+   weight, accent green, out of flow. The consumer applies .annotation together
+   with one per-instance modifier below, which sets the size + percentage
+   placement beside the matching arrow. */
 .annotation {
   position: absolute;
   margin: 0;
@@ -147,59 +219,16 @@
   line-height: normal;
 }
 
-/* ===== Preview absolute-offset block ======================================
- * EXACT-FROM-FIGMA — the ONLY untokenized pixel values in this file.
- *
- * These top / left / width offsets position the cropped overlays, the green
- * arrows, and the handwritten annotations over the like/follow buttons inside
- * their base screenshots. They are NOT specified in the AAP; they originate
- * from the Figma frame and are STARTING values chosen so the first render is
- * close.
- *
- * The companion WelcomePage.tsx agent (which holds the Figma tooling) MUST lock
- * the exact values by running analyze_figma_node(5845:45097) plus its child
- * overlay/arrow/annotation nodes (overlays 5845:45104 / 5845:45107, arrows
- * 5845:45102 / 5845:45109) and then verifying the whole page with
- * compare_screenshot_with_figma(screen 5845:45077), iterating these numbers
- * until every arrow/annotation sits exactly over its like/follow button.
- *
- * Intrinsic asset sizes for reference (design px): like base 800x800, like
- * overlay 736x304, follow base 1600x856, follow overlay 1692x863, like arrow
- * 72x49, follow arrow 114x49.
- * ========================================================================== */
-
-/* --- LIKE group (file-card screenshot, base node 5845:45100) -------------- */
-.previewOverlayLike {
-  top: 448px;    /* exact-from-Figma: verify via compare_screenshot_with_figma */
-  left: 32px;    /* exact-from-Figma */
-  width: 736px;  /* exact-from-Figma: intrinsic like-overlay width */
-}
-
-.previewArrowLike {
-  top: 360px;    /* exact-from-Figma: points at the like/heart button */
-  left: 600px;   /* exact-from-Figma */
-}
-
+/* "like!" — sits beside the like arrow's tail, above the heart button. */
 .annotationLike {
-  top: 300px;    /* exact-from-Figma */
-  left: 620px;   /* exact-from-Figma */
-  font-size: var(--font-size-hand-lg);   /* "like!" — 32 (token) */
+  top: 43%;
+  left: 64%;
+  font-size: var(--font-size-hand-lg);   /* "like!" — 32px (token) */
 }
 
-/* --- FOLLOW group (profile screenshot, base node 5845:45106) -------------- */
-.previewOverlayFollow {
-  top: 0;
-  left: 0;
-  width: 1600px; /* exact-from-Figma: cover base width; verify via comparison */
-}
-
-.previewArrowFollow {
-  top: 40px;     /* exact-from-Figma: points at the Follow button */
-  left: 1120px;  /* exact-from-Figma */
-}
-
+/* "follow" — sits beside the follow arrow's tail, above-right of the button. */
 .annotationFollow {
-  top: 0;
-  left: 1140px;  /* exact-from-Figma */
-  font-size: var(--font-size-hand-sm);   /* "follow" — 28 (token) */
+  top: 9%;
+  left: 23%;
+  font-size: var(--font-size-hand-sm);   /* "follow" — 28px (token) */
 }

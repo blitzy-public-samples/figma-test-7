@@ -16,8 +16,10 @@
  * typographic value resolves to a var(--token) defined in src/styles/tokens.css
  * (loaded first by src/main.tsx). The ONLY non-token literals are structural
  * keywords and the component-specific pixel dimensions that have no token:
- * the card width (384px), the logo-showcase height (200px), the defensive
- * logo max-height (124px), and the 1px border/hairline widths.
+ * the card width (384px), the logo-showcase height (200px), and the 1px
+ * border/hairline widths. (The EXACT per-brand logo box — 192×96 / 124×124 /
+ * 72×72 — is set as width/height HTML attributes by CommunityCard.tsx, not
+ * here; this module keeps only a non-distorting guard for the logo.)
  *
  * Deliberately absent (the Figma design contains none): shadows/elevation,
  * filters, transitions/animations/@keyframes/transforms, and :hover/:focus
@@ -49,19 +51,17 @@
   justify-content: center;
 }
 
-/* The brand-logo <img> — centered by .showcase and rendered at its exact
-   per-brand design size (192×96 Figma Community, 124×124 Discord, 72×72 X).
-   The downloaded source PNGs are much larger than the design sizes, so the
-   guards below keep every logo within the card at the correct aspect ratio:
-   `max-width: 100%` prevents horizontal overflow, and `max-height: 124px`
-   (the tallest design logo — Discord) caps vertical size without ever clipping
-   a correctly-sized logo (all design heights are ≤ 124px). `object-fit:
-   contain` preserves aspect ratio if the element box is ever constrained. */
+/* The brand-logo <img>. Its EXACT per-brand display box (192×96 Figma
+   Community, 124×124 Discord, 72×72 X) is set as width/height HTML attributes
+   by CommunityCard.tsx (derived from brandName), so THAT box is authoritative.
+   This rule is only a NON-DISTORTING GUARD: `object-fit: contain` preserves the
+   logo's aspect ratio within its explicit box, and `max-width: 100%` prevents a
+   logo from ever exceeding the showcase width. No fixed height is imposed here,
+   so the explicit per-brand box is never overridden or clipped. */
 .logo {
   display: block;                        /* remove inline-image descender whitespace */
   max-width: 100%;                       /* never exceed the showcase/card width */
-  max-height: 124px;                     /* tallest design logo (Discord) — high-DPI guard, no token */
-  object-fit: contain;                   /* preserve aspect ratio if the box is constrained */
+  object-fit: contain;                   /* preserve aspect ratio within the explicit box */
 }
 
 /* Footer row — a 1px #9CA3AF in-card hairline on top (a CSS border, NOT the

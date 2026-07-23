@@ -21,7 +21,7 @@
  * helper generic and asset-agnostic (the same rationale as the `Icon` primitive).
  *
  * Styling authority: all visual values (typography, colors, the 24px section/
- * body gap, and the heading↔trailing-icon gap) live in the co-located
+ * body gap, and the 16px heading↔trailing-icon gap) live in the co-located
  * `Section.module.css`, which resolves them exclusively through the design
  * tokens in `src/styles/tokens.css`. This component owns NO literal styles — it
  * only wires class names — so there is no inline `style`, no hardcoded color or
@@ -50,7 +50,7 @@ export interface SectionProps {
    * Heading content. Plain text (e.g. `"Design 20x faster"`) OR text plus a
    * trailing icon node (e.g. `<>Like &amp; Follow…<Icon … /></>` for the
    * "Like & Follow" section). Rendered verbatim inside the `<h2>`; the flex
-   * `.heading` rule vertically centers and 24px-gaps any trailing icon.
+   * `.heading` rule vertically centers and 16px-gaps any trailing icon.
    */
   heading: ReactNode;
   /**

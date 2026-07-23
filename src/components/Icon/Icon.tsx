@@ -31,8 +31,12 @@
  * `size` fallback so each asset renders at its exact box without distortion.
  *
  * The HIDDEN Figma icon variant `5845:6506` (Kind=solid, Size=md*,
- * Container=line-height) is intentionally NOT implemented — there is no
- * `variant` / `kind` / `color` / `size` prop, by design.
+ * Container=line-height) is intentionally NOT implemented: this primitive
+ * exposes NO `variant` / `kind` / `color` selector prop and performs no
+ * runtime recoloring (each glyph is a pre-colored asset). Sizing, by contrast,
+ * IS part of the public API — a required numeric `size` prop (the square
+ * width/height fallback) plus optional `width`/`height` overrides that
+ * reproduce the design's non-square icons (e.g. 16×18, 32×33) exactly.
  */
 import styles from './Icon.module.css';
 

@@ -37,7 +37,7 @@
 .heading {
   display: flex;
   align-items: center;
-  gap: var(--space-24); /* 24 pixels gap between heading text and an OPTIONAL trailing icon (the 40x40 outline heart). CONFIRMED from Figma node 5845:45093 ("Like & Follow" heading): the measured heading-text↔heart auto-layout gap is ~24px (nearest CONFIRMED spacing token --space-24), not 16px. Only the SemiBold "Like & Follow" heading has a trailing icon, so this gap is inert for the three single-text headings. */
+  gap: var(--space-16); /* 16 pixels gap between heading text and an OPTIONAL trailing icon (the 40x40 outline heart). CONFIRMED from the frozen create-schema / WelcomePage consumer contract and Figma node 5845:45093 ("Like & Follow" heading): the heading-text↔heart auto-layout gap is 16px (--space-16). Only the SemiBold "Like & Follow" heading has a trailing icon, so this gap is inert for the three single-text headings — do not add manual whitespace in the heading node. */
   margin: 0;
   font-family: var(--font-sans);
   font-weight: var(--font-weight-medium); /* 500 — CONFIRMED text-h2 (default variant) */

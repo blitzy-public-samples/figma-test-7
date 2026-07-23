@@ -16,12 +16,13 @@
  *     four sides, 4px radius, `overflow: hidden` (so the showcase's top corners
  *     follow the radius), vertical stack (showcase above footer). No shadow.
  *   - Showcase: a fixed 200px band that centers the brand logo both horizontally
- *     and vertically. The per-brand logo renders at its exact design size
- *     (Figma Community 192×96, Discord 124×124, X 72×72); the co-located CSS
- *     Module owns that sizing (`max-width`/`max-height`/`object-fit: contain`),
- *     which is why the `<img>` below declares no width/height — the three logos
- *     have three different design sizes and this component receives only the
- *     brand name, so a single hardcoded dimension pair cannot apply.
+ *     and vertically. The per-brand logo renders at its EXACT design box
+ *     (Figma Community 192×96, Discord 124×124, X 72×72). Because the three
+ *     brands have three different design boxes and this component receives only
+ *     the brand name, the exact `width`/`height` are derived here from
+ *     `brandName` (see `LOGO_DIMENSIONS`) and set as HTML attributes on the
+ *     `<img>`; the co-located CSS Module keeps only a non-distorting guard
+ *     (`max-width: 100%` + `object-fit: contain`), never a fixed height.
  *   - Hairline: a 1px `#9CA3AF` line between showcase and footer, drawn as the
  *     footer's top border (NOT a separate element and NOT the full-width
  *     `Divider` component).
@@ -97,6 +98,24 @@ export interface CommunityCardProps {
 }
 
 /**
+ * Exact per-brand logo display box (px), transcribed VERBATIM from the
+ * reconciled Figma spec (AAP §0.3.3, CommunityCard component `5845:45179`).
+ * Each brand's source PNG is far larger than its design box, so the card must
+ * render the logo at these EXACT dimensions to preserve the design's per-brand
+ * sizing and aspect ratio:
+ *   - "Figma Community" → 192 × 96  (source 1200×600, 2:1 wordmark)
+ *   - "Discord"         → 124 × 124 (source 1024×1024, 1:1)
+ *   - "X"               → 72 × 72   (source 2000×2000, 1:1)
+ * Keyed by the `brandName` prop, so the public props contract stays exactly the
+ * three required strings — no width/height props leak into the interface.
+ */
+const LOGO_DIMENSIONS: Record<string, { width: number; height: number }> = {
+  'Figma Community': { width: 192, height: 96 },
+  Discord: { width: 124, height: 124 },
+  X: { width: 72, height: 72 },
+};
+
+/**
  * Render one "Join Our Communities" card: a centered brand logo on the 200px
  * showcase, then the brand name (`<h3>`) and an underlined "Visit" external link
  * in the footer, separated from the showcase by the 1px in-card hairline.
@@ -114,17 +133,33 @@ export default function CommunityCard({
   brandName,
   visitHref,
 }: CommunityCardProps) {
+  // Resolve the EXACT per-brand logo display box from LOGO_DIMENSIONS (keyed by
+  // brandName). The three community brands are fixed by data/communities.ts; a
+  // bounded 124×124 square is a safe fallback for any unrecognized brand so the
+  // logo can never render at its huge intrinsic size or distort.
+  const logoDimensions =
+    LOGO_DIMENSIONS[brandName] ?? { width: 124, height: 124 };
+
   return (
     <article className={styles.card}>
       <div className={styles.showcase}>
         {/*
-          Logo intentionally has NO width/height: the three brand logos have
-          three different design sizes (192×96 / 124×124 / 72×72) and this card
-          receives only `brandName`, so sizing is delegated to the CSS Module
-          (max-width / max-height / object-fit: contain). `alt` is the brand
-          name (non-empty, informative) per AAP §0.8.
+          The logo renders at its EXACT per-brand design box (192×96 Figma
+          Community / 124×124 Discord / 72×72 X), resolved from `brandName` via
+          LOGO_DIMENSIONS and set as explicit width/height HTML attributes. The
+          source PNGs are much larger than these boxes, so the explicit box —
+          together with the CSS Module's non-distorting guard (max-width: 100%
+          + object-fit: contain) — keeps every logo at its correct size and
+          aspect ratio, centered in the 200px showcase. `alt` is the brand name
+          (non-empty, informative) per AAP §0.8.
         */}
-        <img className={styles.logo} src={logoSrc} alt={brandName} />
+        <img
+          className={styles.logo}
+          src={logoSrc}
+          alt={brandName}
+          width={logoDimensions.width}
+          height={logoDimensions.height}
+        />
       </div>
       <div className={styles.footer}>
         <h3 className={styles.brandName}>{brandName}</h3>
@@ -136,16 +171,15 @@ export default function CommunityCard({
           the anchor (target="_blank" + rel="noopener noreferrer"), the verbatim
           href, and the 16×18 icon sizing for the `sm` variant.
 
-          BLITZY [FIGMA]: The reconciled Figma render (node 5845:45179 and its
-          Discord/X instances) shows the external-link glyph LEADING the word
-          "Visit" (icon to the LEFT of the label). This file follows the AAP
-          §0.3.3 Component Inventory and its own spec, which define the Visit
-          icon as a `suffix` (trailing), and the `Link` primitive is architected
-          for that (its `sm` suffix renders the correct 16×18; a prefix slot
-          renders 24×24). Rendering the icon on the LEFT at the correct 16×18
-          size would require a `Link` prefix-sizing change, which is outside this
-          single file's scope — flagged here for holistic review by the Link /
-          page owner so all Visit links stay consistent.
+          AAP-PRECEDENCE (final): the Visit external-link glyph is the link's
+          `suffix` — it trails the label. This is the frozen AAP §0.3.3 contract:
+          the Component Inventory defines the Visit link with a trailing
+          `suffix icon_external_link_visit.svg`, and the shared `Link` primitive
+          is sized precisely for that (its `sm` suffix renders this glyph at its
+          exact 16×18 box; the prefix slot renders 24×24, which would distort a
+          16×18 icon). Under the project's design precedence the explicit AAP
+          contract governs the icon placement, so the icon is passed as
+          `suffixIcon` and all three cards' Visit links stay consistent.
         */}
         <Link
           label="Visit"

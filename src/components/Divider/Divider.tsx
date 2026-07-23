@@ -52,9 +52,15 @@ import styles from './Divider.module.css';
 export interface DividerProps {
   /**
    * OPTIONAL extra class appended AFTER the internal `styles.divider` base
-   * class (so a caller-supplied layout class wins in source order). When
-   * omitted, ONLY `styles.divider` is applied — no trailing space and no
-   * `undefined` leaks into the rendered `class` attribute.
+   * class in the element's `class` attribute. (The order of names within the
+   * `class` attribute does NOT determine the cascade: which declaration wins is
+   * decided by CSS specificity and then by stylesheet source order, not by the
+   * order classes are listed on the element. The base class is appended-to,
+   * rather than replaced, purely to guarantee `.divider` is always present;
+   * callers pass layout-only hooks such as margins that do not conflict with
+   * the divider's own visual rules.) When omitted, ONLY `styles.divider` is
+   * applied — no trailing space and no `undefined` leaks into the rendered
+   * `class` attribute.
    */
   className?: string;
 }
