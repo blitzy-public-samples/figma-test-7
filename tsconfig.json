@@ -1,22 +1,57 @@
 {
+  // ---------------------------------------------------------------------------
+  // tsconfig.json — TypeScript project config for the browser application tier
+  //
+  // Type-checks the React 19 + TypeScript source under `src/` (the Welcome-page
+  // components, pages, data, styles, and entry modules). Vite performs the real
+  // transpilation/bundling, so this config is check-only (`noEmit`).
+  //
+  // Project-references layout (Vite `react-ts` template shape, Option A):
+  //   * This root config owns the browser/app compiler options directly and
+  //     `include`s `src`.
+  //   * It `references` ./tsconfig.node.json, which type-checks the Node-context
+  //     tooling (vite.config.ts, playwright.config.ts). `npm run build` runs
+  //     `tsc -b`, which builds the referenced (composite) Node project first,
+  //     then type-checks this project.
+  //
+  // On the pinned TypeScript 5.9.x, only the *referenced* project must enable
+  // `composite`; this entry project stays check-only with `noEmit`.
+  // ---------------------------------------------------------------------------
   "compilerOptions": {
+    // Incremental build metadata for `tsc -b`; git-ignored via the `.tmp` cache.
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo",
+
+    // Modern browser baseline. `useDefineForClassFields` matches native class
+    // field semantics (default for ES2022+ targets).
     "target": "ES2022",
     "useDefineForClassFields": true,
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "module": "ESNext",
+
+    // Shim client-side globals (import.meta.env, `*.svg` / `*.png` module types,
+    // etc.). Specifying `types` limits auto-included ambient packages to this
+    // set (recommended since TS 5.9); React's types resolve through its imports,
+    // and the app's `*.svg` / `*.png` ambient declarations live in
+    // src/vite-env.d.ts (picked up via the `src` include below).
     "types": ["vite/client"],
     "skipLibCheck": true,
 
-    /* Bundler mode */
+    /* Bundler mode — align TypeScript resolution with Vite's bundler. */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
+    // Required by Vite 8: its per-file transformer transpiles without type
+    // information, so `isolatedModules` flags constructs that cannot be compiled
+    // in isolation (e.g. const enums, implicit type-only re-exports).
+    "isolatedModules": true,
+    // Enforce verbatim import/export elision (type-only imports must be marked),
+    // which keeps output deterministic under isolated transpilation.
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
     "noEmit": true,
+    // React 19 automatic JSX runtime — no `import React` needed in components.
     "jsx": "react-jsx",
 
-    /* Strictness / linting */
+    /* Strictness / linting — typed component props are a project rule. */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -24,6 +59,8 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
+  // All application TypeScript/TSX under src/ is type-checked here.
   "include": ["src"],
+  // Build the Node-context tooling project first (see ./tsconfig.node.json).
   "references": [{ "path": "./tsconfig.node.json" }]
 }

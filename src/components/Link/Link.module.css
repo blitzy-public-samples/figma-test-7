@@ -1,0 +1,83 @@
+/**
+ * Link.module.css — co-located CSS Module for the Link component
+ * ============================================================================
+ * Consumed by src/components/Link/Link.tsx as
+ *   import styles from './Link.module.css'
+ * Link renders an underlined external hyperlink as an inline-flex row:
+ *   [prefixIcon?]  label  [suffixIcon?]
+ * with the icon(s) and text vertically centered and a small uniform gap.
+ *
+ * TWO documented usages (AAP §0.3.3), composed from the variant classes below:
+ *   • Community-page link — .link + .sizeLg + .colorLink
+ *       var(--color-link), Inter 500, 18/28, underlined
+ *       ("Visit Plus UI's Figma Community Page", Like & Follow section)
+ *   • Visit link          — .link + .sizeSm + .colorText
+ *       var(--color-text), Inter 500, 16/24, underlined
+ *       ("Visit", reused inside CommunityCard)
+ *
+ * TOKEN-DRIVEN STYLING (AAP §0.8): every color / font / size / line-height
+ * resolves to a var(--token) declared in src/styles/tokens.css. tokens.css is
+ * cascaded globally ONCE by src/main.tsx before this module, so NO @import is
+ * needed (and none is used). The only permitted non-token literals are
+ * structural (inline-flex, center, underline, fit-content) plus the verified
+ * icon↔label gap documented on .link below.
+ *
+ * FLAT DESIGN — the reconciled Figma "Welcome" spec has no elevation and no
+ * motion, so this module intentionally declares NO box-shadow, NO filter, and
+ * NO transition / animation. The Figma link state is "hovered/underlined": the
+ * underline is ALWAYS on and is never toggled by :hover / :focus.
+ *
+ * Design source (read-only, authoritative): Figma fileKey
+ * U1wiYiDtkktS3L2hsXteNO, screen node 5845:45077 ("Welcome");
+ * Link component node 1965:12013.
+ */
+
+/* Base anchor — inline-flex row: [prefixIcon?] label [suffixIcon?].
+ * The color variant (.colorLink / .colorText) is applied to THIS element; the
+ * label inherits it and its underline paints with currentColor, so the text
+ * and its underline always share the exact variant color. */
+.link {
+  display: inline-flex;
+  align-items: center;                     /* vertically center the prefix/suffix icons against the text */
+  gap: 8px;                                /* icon↔label gap — verified from the Figma "Welcome" render:
+                                            * the visit-link row measures 8px and the community-link row
+                                            * measures the same within rounding. No spacing token matches
+                                            * (the scale starts at --space-16 = 16px), so the exact design
+                                            * value is applied as a structural literal — visual fidelity is
+                                            * the overriding constraint (AAP §0.1.2 / §0.8). */
+  width: fit-content;                      /* occupy only content width (a visit link sits inside a CommunityCard row) */
+  font-family: var(--font-sans);           /* Inter stack */
+  font-weight: var(--font-weight-medium);  /* 500 */
+  text-decoration: none;                   /* reset the user-agent anchor underline so the ONLY underline
+                                            * is the one declared on .label — this guarantees the prefix/
+                                            * suffix icons (which live inside this anchor) are never
+                                            * underlined, independent of flex-item text-decoration behavior. */
+}
+
+/* Text label — the underline lives HERE (not on .link). Because .link is
+ * inline-flex, scoping text-decoration to the label guarantees only the text is
+ * underlined while the prefix/suffix icons never are. The underline paints with
+ * currentColor, inherited from the color variant set on .link. */
+.label {
+  text-decoration: underline;
+}
+
+/* ===== Size variants (font metrics only; base .link supplies family/weight/layout) ===== */
+.sizeLg {
+  font-size: var(--font-size-link-lg);       /* 18px — community-page link */
+  line-height: var(--line-height-link-lg);   /* 28px */
+}
+
+.sizeSm {
+  font-size: var(--font-size-link-sm);       /* 16px — visit link */
+  line-height: var(--line-height-link-sm);   /* 24px */
+}
+
+/* ===== Color variants (set on .link; the label + its underline inherit via currentColor) ===== */
+.colorLink {
+  color: var(--color-link);   /* community-page link variant */
+}
+
+.colorText {
+  color: var(--color-text);   /* visit-link variant */
+}

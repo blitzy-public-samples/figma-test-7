@@ -1,0 +1,55 @@
+/**
+ * fonts.css — Self-hosted @font-face declarations
+ * =============================================================================
+ * Second of three global stylesheets, imported ONCE by src/main.tsx AFTER
+ * tokens.css and BEFORE global.css. It declares the self-hosted web fonts so
+ * the page renders with pixel-faithful, offline-deterministic typography during
+ * Playwright screenshot capture (AAP §0.4.2 "Font Provisioning").
+ *
+ * Design source (read-only, authoritative for all values):
+ *   Figma fileKey U1wiYiDtkktS3L2hsXteNO, node 5845:45077 ("Welcome", 1536×3324)
+ *
+ * Contract:
+ *   - The family string 'Inter' matches tokens.css --font-sans; 'Bubblegum Sans'
+ *     matches tokens.css --font-hand. Do NOT rename these families.
+ *   - Font binaries are self-hosted WOFF2 provisioned under src/assets/fonts/**.
+ *     This file only REFERENCES them; it does not generate them.
+ *   - Relative url() paths resolve relative to THIS file's location
+ *     (src/styles/), so ../assets/... correctly targets src/assets/....
+ *   - Helvetica Neue is deliberately NOT declared here — it is a system/fallback
+ *     font provided only via tokens.css --font-wordmark's stack.
+ *
+ * This is a plain global stylesheet (NOT a CSS Module) and imports nothing.
+ */
+
+/* Inter — primary UI / body / heading typeface (weights 400, 500, 600) */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/inter/Inter-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../assets/fonts/inter/Inter-Medium.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../assets/fonts/inter/Inter-SemiBold.woff2') format('woff2');
+}
+
+/* Bubblegum Sans — the two handwritten green annotations ("like!", "follow") only */
+@font-face {
+  font-family: 'Bubblegum Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/bubblegum-sans/BubblegumSans-Regular.woff2') format('woff2');
+}

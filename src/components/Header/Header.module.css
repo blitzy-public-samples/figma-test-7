@@ -1,0 +1,111 @@
+/**
+ * Header.module.css — co-located CSS Module for Header.tsx
+ * =============================================================================
+ * Styles the full-bleed indigo→violet gradient HERO band at the very top of the
+ * Welcome page.
+ *
+ * Design source (read-only, authoritative for every value below):
+ *   Figma fileKey U1wiYiDtkktS3L2hsXteNO, screen "Welcome" node 5845:45077
+ *   Header component node 5845:45213 (gradient cover I5845:45213;5845:46807)
+ *
+ * Token-driven styling rule (AAP §0.8) — MANDATORY: every color / spacing /
+ * gradient / font value resolves to a var(--token) from src/styles/tokens.css
+ * (imported globally by src/main.tsx before any component). The only permitted
+ * non-token literals are structural (0, auto, 100%, none, normal, and layout
+ * keywords) plus the two Figma-measured 8px small gaps (symbol↔wordmark and
+ * icon↔label) that fall below the coarse spacing-token scale (which starts at
+ * 16px) — each is annotated inline. There is no dedicated white-text token, so
+ * all white hero foreground uses var(--color-bg).
+ *
+ * Deliberately absent (the Figma spec contains none): no shadow / elevation
+ * (no box-shadow / filter / text-shadow), no motion (no transition / animation /
+ * @keyframes), and no interactive :hover / :focus / :active restyling — the hero
+ * link renders in its resting, already-underlined state. Do not add any.
+ *
+ * box-sizing: border-box is set globally in global.css, so the 96px horizontal
+ * padding sits INSIDE the 100% width and is NOT re-declared here. This module
+ * imports nothing (@import is forbidden — the token cascade is guaranteed by
+ * main.tsx). Class names are camelCase, locally scoped/hashed by Vite, and
+ * consumed as styles.<name> in Header.tsx.
+ */
+
+/* Root hero band — full-bleed gradient cover (Figma 5845:45213 / cover
+   I5845:45213;5845:46807). WelcomePage renders this full width at the top; the
+   96px horizontal padding aligns inner content to the 1344px body column
+   (1536px design frame − 2×96px = 1344px). No max-width: the band is full-bleed
+   and the outer width context is owned by WelcomePage. */
+.hero {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-48);                       /* 48px between brand row and hero copy */
+  padding: var(--space-64) var(--space-96);   /* 64px vertical / 96px horizontal */
+  background: var(--gradient-hero);           /* linear-gradient(70deg, #312E81 3%, #4338CA 91%) */
+  border-radius: var(--radius-4) var(--radius-4) 0 0; /* 4px TOP corners only; flows into next section */
+  color: var(--color-bg);                     /* var(--color-bg) resolves to #FFFFFF — white text on the gradient */
+}
+
+/* Brand row: logo lockup (left) <-> website link (right). */
+.brandRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* Left: Plus UI logo lockup (symbol image + wordmark). */
+.lockup {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Figma-measured 8px — symbol↔wordmark; no --space-8 token exists (pixel fidelity, AAP §0.8) */
+}
+
+/* "Plus UI" wordmark text (Helvetica Neue fallback stack; single line). */
+.wordmark {
+  font-family: var(--font-wordmark);          /* "Helvetica Neue", Helvetica, Arial, sans-serif */
+  font-weight: var(--font-weight-bold);       /* 700 */
+  font-size: var(--font-size-wordmark);       /* 27px */
+  line-height: normal;                        /* single line; no wordmark line-height token exists */
+  color: var(--color-bg);                     /* var(--color-bg) resolves to #FFFFFF — white text on the gradient */
+}
+
+/* Right: external website link (icon before label). Renders underlined at rest;
+   the underline is re-applied here over the global a { text-decoration: none }. */
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px; /* Figma-measured 8px — icon↔label; no --space-8 token exists (pixel fidelity, AAP §0.8) */
+  font-family: var(--font-sans);              /* Inter */
+  font-weight: var(--font-weight-medium);     /* 500 */
+  font-size: var(--font-size-link-sm);        /* 16px */
+  line-height: var(--line-height-link-sm);    /* 24px */
+  color: var(--color-bg);                     /* var(--color-bg) resolves to #FFFFFF — white text on the gradient */
+  text-decoration: underline;                 /* re-applied over global.css a { text-decoration: none } */
+}
+
+/* Hero copy column: H1 title + subtitle. */
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);                       /* 16px between h1 and subtitle */
+}
+
+/* H1 hero title (text-h1). */
+.title {
+  margin: 0;
+  font-family: var(--font-sans);              /* Inter */
+  font-weight: var(--font-weight-semibold);   /* 600 */
+  font-size: var(--font-size-h1);             /* 48px */
+  line-height: var(--line-height-h1);         /* 48px */
+  color: var(--color-bg);                     /* var(--color-bg) resolves to #FFFFFF — white text on the gradient */
+}
+
+/* Hero subtitle (text-hero-subtext). */
+.subtitle {
+  margin: 0;
+  font-family: var(--font-sans);              /* Inter */
+  font-weight: var(--font-weight-regular);    /* 400 */
+  font-size: var(--font-size-hero-subtext);   /* 18px */
+  line-height: var(--line-height-hero-subtext); /* 28px */
+  color: var(--color-bg);                     /* var(--color-bg) resolves to #FFFFFF — white text on the gradient */
+}

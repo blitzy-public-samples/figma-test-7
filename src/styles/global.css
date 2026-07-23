@@ -1,0 +1,116 @@
+/**
+ * global.css — CSS reset + base document styles
+ * =============================================================================
+ * Third of three global stylesheets, imported ONCE by src/main.tsx AFTER
+ * tokens.css and fonts.css. That import order is owned by main.tsx, so this file
+ * relies on the :root custom properties declared in tokens.css already existing
+ * and intentionally declares NO @import of its own.
+ *
+ * Responsibilities:
+ *   1. A universal box-sizing reset so element padding/border never expand box
+ *      widths — the component layouts (fixed-width 380px/384px cards, 48px-padded
+ *      panels, the 1344px content column) all depend on border-box being in
+ *      effect globally.
+ *   2. A minimal margin/padding reset on the flow elements the page uses, so the
+ *      64px inter-section / 24px intra-section rhythm is governed entirely by the
+ *      page and component stylesheets rather than by user-agent defaults.
+ *   3. The base document surface — background, text color, and typeface — resolved
+ *      exclusively through tokens.css custom properties (the single source of
+ *      visual truth per AAP §0.6.3).
+ *
+ * Token-driven mandate (AAP §0.8): every color/font value resolves via var(--*).
+ * The only literals permitted here are structural (0, 100%, 100vh, border-box,
+ * none, inherit) plus the font-smoothing / text-rendering keywords. There is no
+ * raw hex, no raw px spacing, no shadow/elevation, and no animation/transition —
+ * the reconciled Figma "Welcome" specification contains none of those.
+ *
+ * This is a plain global stylesheet (NOT a CSS Module); its selectors are global
+ * by design.
+ */
+
+/* Universal box-sizing: padding and border are drawn INSIDE the declared width,
+   so a 380px card with 16px title padding stays 380px wide (never 412px).
+   Applied to every element plus its generated ::before / ::after boxes. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Strip user-agent margins from the flow elements the design uses. Vertical
+   rhythm is owned by the page/section/component stylesheets, so headings and
+   paragraphs must start from a zero baseline. */
+html,
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+/* Remove default document padding so the hero band is truly full-bleed and the
+   96px page padding is contributed solely by the page layout, not the UA. */
+html,
+body {
+  padding: 0;
+}
+
+/* Base document surface — every value resolved through tokens.css. Deliberately
+   sets NO font-size on html/body: per-element type sizes (48/36/24/20/18/16px)
+   are applied by the component and page stylesheets, so the default 16px root is
+   left intact to avoid fighting them. */
+body {
+  min-height: 100vh;                       /* fill the viewport even before content flows in */
+  background: var(--color-bg);             /* #FFFFFF — page surface */
+  color: var(--color-text);                /* #030712 — primary text */
+  font-family: var(--font-sans);           /* Inter with system fallback stack */
+  font-weight: var(--font-weight-regular); /* 400 — the design's base body weight */
+  -webkit-font-smoothing: antialiased;     /* match the crisp Figma text rendering on WebKit */
+  -moz-osx-font-smoothing: grayscale;      /* …and on Firefox / macOS */
+  text-rendering: optimizeLegibility;      /* enable kerning & ligatures for faithful headings */
+}
+
+/* Replaced / media elements render as predictable blocks (no inline descender
+   whitespace gap) and never overflow their container. */
+img,
+picture,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Neutral anchor base: the Link component re-applies the correct underline and
+   token color (--color-link / --color-text) per the design, so the global base
+   must not impose its own decoration or color. */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Lists carry no decorative markers in this design; strip bullets and default
+   indentation so any list functions as a plain layout container. */
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Form / interactive controls inherit typography and color rather than falling
+   back to UA defaults. The page ships no form controls today; this is a harmless
+   defensive guard that keeps any future control on-brand. */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
