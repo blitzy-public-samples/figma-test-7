@@ -45,6 +45,7 @@
  */
 import { chromium } from '@playwright/test';
 import { spawn } from 'node:child_process';
+import { existsSync } from 'node:fs';
 import { mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -56,6 +57,11 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '..');
 const SCREENSHOTS_DIR = path.join(REPO_ROOT, 'screenshots');
+// The production build `vite preview` serves. `dist/index.html` is the exact entry file
+// the preview server answers at `/`; its presence is the precondition for a spawn to be
+// worth attempting (see the pre-flight guard on the spawn path below).
+const DIST_DIR = path.join(REPO_ROOT, 'dist');
+const DIST_INDEX_HTML = path.join(DIST_DIR, 'index.html');
 
 const DEFAULT_PREVIEW_URL = 'http://localhost:4173';
 const DEFAULT_PREVIEW_PORT = 4173; // Vite's `preview` default; used when a URL omits a port.
@@ -290,7 +296,14 @@ async function assertServerIdentity(url) {
 /**
  * Poll `isServerUp` every SERVER_POLL_MS until it returns true or `timeoutMs` elapses.
  * Aborts early (returns false) if the spawned preview process exits before becoming
- * reachable — e.g. when `dist/` is missing — so we surface a helpful error promptly.
+ * reachable — e.g. a `--strictPort` collision or a `vite preview` that crashes on boot —
+ * so we surface a helpful error promptly instead of waiting out the full timeout.
+ *
+ * NOTE: the missing-`dist/` case does NOT reach here — it is rejected up front, before we
+ * spawn (see the spawn path). Vite 8's `vite preview` does NOT exit when `dist/` is absent;
+ * it starts and serves HTTP 404 at `/`, so `serverExited` would never trip and this loop
+ * would otherwise burn the entire `timeoutMs` before failing. The pre-flight build check
+ * turns that slow, opaque timeout into an instant, actionable error.
  * @param {URL} url
  * @param {number} timeoutMs
  * @returns {Promise<boolean>}
@@ -440,6 +453,22 @@ try {
     startedServer = false;
     console.log(`Reusing preview server already reachable at ${safeOrigin(previewUrl)}`);
   } else {
+    // Pre-flight: refuse to spawn `vite preview` when there is no production build to
+    // serve. This must happen BEFORE the spawn because Vite 8's preview server does NOT
+    // exit when `dist/` is missing — it boots and serves HTTP 404 at `/`. Without this
+    // guard, `waitForServer` would never see a 2xx and never see the child exit, so it
+    // would poll the ENTIRE `serverTimeoutMs` (default 60s) before failing — long enough
+    // that an outer `timeout 30s` would kill the run (exit 124) before the diagnostic is
+    // even printed. Checking for the build artifact up front converts that slow, opaque,
+    // hang-like failure into an instant, actionable one, and means we never leave a
+    // detached preview child that an abrupt external kill could orphan.
+    if (!existsSync(DIST_INDEX_HTML)) {
+      throw new Error(
+        `No production build to preview: ${path.relative(REPO_ROOT, DIST_INDEX_HTML)} ` +
+          `does not exist, so \`vite preview\` has nothing to serve. Run \`npm run build\` ` +
+          `first so \`dist/\` exists, then re-run \`npm run screenshot\`.`,
+      );
+    }
     const port = previewUrl.port;
     console.log(`Starting preview server (vite preview) on port ${port} …`);
     // `detached: true` → new process group so `stopServer()` can kill the whole tree.
