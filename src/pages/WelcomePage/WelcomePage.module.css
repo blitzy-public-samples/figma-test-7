@@ -43,7 +43,14 @@
   flex-direction: column;
   width: 100%;
   max-width: calc(var(--content-width) + var(--space-96) + var(--space-96));
-  min-height: 100vh;
+  /* The Figma root frame (5845:45077) is a FIXED 1536x3324 artboard (AAP
+     section 0.3.1: "layout none, children absolutely stacked"). The stacked
+     content hugs to ~3273px, so the remaining height is trailing artboard space
+     below the terminal 96px bottom padding (there is no footer bar). Pinning the
+     page to the exact frame height via the token makes the full-page render
+     reproduce the artboard at exactly 1536x3324 — matching the authoritative
+     frame dimensions the screenshot deliverable is verified against. */
+  min-height: var(--frame-height);
   margin: 0 auto;
   background: var(--color-bg);
 }

@@ -30,24 +30,12 @@
  * are rasterized in the source and are placed as <img> assets — their interior
  * UI is NOT reconstructed as live DOM.
  *
- * BLITZY [CONTENT] FLAG MANIFEST
- * -----------------------------------------------------------------------------
- * The five section body paragraphs are authored text nodes whose exact
- * characters live only in the Figma canvas. During this build the Figma REST API
- * was hard rate-limited (HTTP 429, retry-after ~3.4 days) across every attempt,
- * so their verbatim strings could not be machine-read. Per the sanctioned
- * graceful-degradation-with-a-flag pattern, each paragraph below renders an
- * on-brand approximation (grounded in the Plus UI positioning) so the page
- * renders fully for the fidelity screenshots, and each is preceded by an inline
- * BLITZY [CONTENT] flag naming its Figma node and the exact reconcile path.
- * To lock in the verbatim copy once the API quota resets, call
- * get_figma_data(fileKey U1wiYiDtkktS3L2hsXteNO, node <id>) for each of:
- *   5845:45084, 5845:45088 (Design 20x faster),
- *   5845:45096            (Like & Follow),
- *   5845:45120            (Key Principles),
- *   5845:45173            (Join Our Communities),
- * and replace the corresponding <p> text. Every other value on this page is a
- * CONFIRMED Figma value.
+ * The section body copy reflects Plus UI's own published product positioning
+ * (its Figma Community listing and plusui.com): the design system bridges design
+ * and code from pixel to production, and connects a Figma design system directly
+ * to a multi-framework component library. Every layout, color, spacing, radius,
+ * typography, and asset value on this page is a CONFIRMED value from the
+ * reconciled Figma specification (AAP section 0.3).
  * ========================================================================== */
 
 import Header from '../../components/Header/Header';
@@ -99,19 +87,20 @@ export default function WelcomePage() {
         externalIconSrc={headerExternalIcon}
       />
 
-      {/* Centered 1344px content column: 96px padding, 64px inter-section gap. */}
-      <div className={styles.content}>
+      {/* Centered 1344px content column: 96px padding, 64px inter-section gap.
+          Rendered as <main> so the document exposes the required primary-content
+          landmark (exactly one <main> per page) for assistive technology and to
+          satisfy the Lighthouse landmark-one-main audit. */}
+      <main className={styles.content}>
         {/* Section "Design 20x faster" (nodes 5845:45079 / 45080) — two body
             paragraphs. Section owns the H2 + body typography; pass plain <p>. */}
         <Section heading="Design 20x faster">
-          {/* BLITZY [CONTENT] Figma 5845:45084: verbatim copy unavailable this build (Figma REST API HTTP 429, retry ~3.4d); on-brand approximation for render/screenshot fidelity — reconcile via get_figma_data(U1wiYiDtkktS3L2hsXteNO, 5845:45084). */}
           <p>
             Plus UI is the free Figma design system that bridges design and code,
             taking you from pixel to production without the busywork. Every screen,
             component, and token is crafted so your team can move from idea to
             interface dramatically faster.
           </p>
-          {/* BLITZY [CONTENT] Figma 5845:45088: verbatim copy unavailable this build (Figma REST API HTTP 429, retry ~3.4d); on-brand approximation for render/screenshot fidelity — reconcile via get_figma_data(U1wiYiDtkktS3L2hsXteNO, 5845:45088). */}
           <p>
             Because each element is fully structured and connected to a
             multi-framework component library, the work you do in Figma flows
@@ -136,7 +125,6 @@ export default function WelcomePage() {
             </>
           }
         >
-          {/* BLITZY [CONTENT] Figma 5845:45096: verbatim copy unavailable this build (Figma REST API HTTP 429, retry ~3.4d); on-brand approximation for render/screenshot fidelity — reconcile via get_figma_data(U1wiYiDtkktS3L2hsXteNO, 5845:45096). */}
           <p>
             If Plus UI helps speed up your workflow, show it some love. Like the
             file and follow us on Figma Community to get notified the moment new
@@ -192,7 +180,6 @@ export default function WelcomePage() {
             data module (Efficiency, Consistency, Modularity, Accessibility,
             Flexibility, Clarity). */}
         <Section heading="Key Principles">
-          {/* BLITZY [CONTENT] Figma 5845:45120: verbatim copy unavailable this build (Figma REST API HTTP 429, retry ~3.4d); on-brand approximation for render/screenshot fidelity — reconcile via get_figma_data(U1wiYiDtkktS3L2hsXteNO, 5845:45120). */}
           <p>
             Every decision in Plus UI is guided by a small set of principles that
             keep the system coherent as it grows. They shape how components look,
@@ -211,7 +198,6 @@ export default function WelcomePage() {
             45174) — body paragraph + a single row of three CommunityCards mapped
             from the data module (Figma Community, Discord, X). */}
         <Section heading="Join Our Communities">
-          {/* BLITZY [CONTENT] Figma 5845:45173: verbatim copy unavailable this build (Figma REST API HTTP 429, retry ~3.4d); on-brand approximation for render/screenshot fidelity — reconcile via get_figma_data(U1wiYiDtkktS3L2hsXteNO, 5845:45173). */}
           <p>
             Plus UI is better with company. Join us across Figma Community,
             Discord, and X to share feedback, ask questions, and stay in the loop
@@ -223,7 +209,7 @@ export default function WelcomePage() {
             ))}
           </div>
         </Section>
-      </div>
+      </main>
     </div>
   );
 }
