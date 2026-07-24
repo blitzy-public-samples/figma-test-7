@@ -33,6 +33,7 @@
    `overflow: hidden` clips the showcase's top corners to the 4px radius. */
 .card {
   width: 384px;                          /* exact Figma card width — no token exists */
+  flex-shrink: 0;                        /* hold the fixed 384px width as a flex item in .communitiesPanel — never shrink below it (mirrors the accepted .previewItem { flex: 0 0 auto } idiom). Without this, the default flex-shrink:1 lets the card collapse below 384px when the row is narrower than its content, and the .card `overflow: hidden` then CLIPS the logo/brand name/Visit link and can hide them entirely (QA F-1). Holding the width instead drives an acceptable horizontal scroll — the authoritative 1536/1920 layout is unaffected because there the row already fits exactly (3×384 + 2×48 = 1248 = the 1248px panel inner). */
   background: var(--color-bg);           /* #FFFFFF */
   border: 1px solid var(--color-border); /* 1px solid #9CA3AF */
   border-radius: var(--radius-4);        /* 4px */

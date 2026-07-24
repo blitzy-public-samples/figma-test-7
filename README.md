@@ -23,10 +23,10 @@ There is **no router** and **no state-management library**: the deliverable is a
 
 ## Prerequisites
 
-- **[Node.js](https://nodejs.org/) 24.x (Active LTS).** The version is pinned in [`.nvmrc`](./.nvmrc) — run `nvm use` to select it — and declared in [`package.json`](./package.json) via `engines` (`node >=24.0.0`).
+- **[Node.js](https://nodejs.org/) 22.x (Active LTS).** The version is pinned in [`.nvmrc`](./.nvmrc) — run `nvm use` to select it — and declared in [`package.json`](./package.json) via `engines` (`node >=22.12.0`).
 - **npm** as the package manager (bundled with Node.js).
 
-> Vite 8 requires Node.js `20.19+` or `22.12+`. Node.js 24 satisfies this requirement.
+> Vite 8 requires Node.js `20.19+` or `22.12+`. Node.js 22.12+ satisfies this requirement.
 
 ## Getting started
 
@@ -60,7 +60,7 @@ Serve the production build locally:
 npm run preview
 ```
 
-Capture verification screenshots — runs `node scripts/capture-screenshots.mjs`, which boots the preview server, sets a **1536 px** viewport width, and captures the full-page render into `screenshots/` (which is git-ignored). This is the fidelity-verification deliverable:
+Capture verification screenshots — runs `node scripts/capture-screenshots.mjs`, which boots the preview server, sets a **1536 px** viewport width, and captures the full-page render into `screenshots/` (which is git-ignored). Requires a prior `npm run build` so `dist/` exists for the preview server to serve. This is the fidelity-verification deliverable:
 
 ```bash
 npm run screenshot
@@ -71,13 +71,13 @@ npm run screenshot
 ```text
 figma-test-7/
 ├── index.html                    # Vite entry HTML with the #root mount node
-├── package.json                  # Dependencies, engines (Node 24), and npm scripts
+├── package.json                  # Dependencies, engines (Node 22), and npm scripts
 ├── package-lock.json             # Resolved dependency lockfile
 ├── tsconfig.json                 # App TypeScript configuration
 ├── tsconfig.node.json            # TypeScript configuration for vite.config.ts
 ├── vite.config.ts                # Vite configuration (registers @vitejs/plugin-react)
 ├── playwright.config.ts          # Playwright configuration for the screenshot workflow
-├── .nvmrc                        # Pins Node.js 24 for contributors
+├── .nvmrc                        # Pins Node.js 22 for contributors
 ├── .gitignore                    # Ignores node_modules/, dist/, screenshots/, etc.
 ├── scripts/
 │   └── capture-screenshots.mjs   # Boots the preview server and captures the full-page render

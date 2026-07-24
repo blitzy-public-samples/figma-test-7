@@ -279,7 +279,7 @@ let serverExited = false; // set by the child 'exit'/'error' listeners for fast-
  */
 async function isServerUp(url) {
   try {
-    // Node 24 provides a global fetch; bound each probe so a hung socket can't stall us.
+    // Node 22 provides a global fetch (stable since Node 18); bound each probe so a hung socket can't stall us.
     // `redirect: 'manual'` keeps a 3xx visible as a non-2xx status instead of following it.
     const res = await fetch(url, {
       signal: AbortSignal.timeout(PROBE_TIMEOUT_MS),

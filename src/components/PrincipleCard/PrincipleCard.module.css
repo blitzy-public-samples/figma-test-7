@@ -38,6 +38,7 @@
   display: flex;
   flex-direction: column;                    /* cover above body */
   width: 380px;                              /* exact Figma card width (no token) */
+  flex-shrink: 0;                            /* hold the fixed 380px width as a flex item in the wrapping .principlesPanel — never shrink below it. .principlesPanel already wraps, so cards hold 380px down to a ~480px container (fine at 1280 two-column and 768 one-column); but without this, at the narrowest in-scope width (375px) the lone wrapped card shrinks far below 380px and the .card `overflow: hidden` CLIPS the title/description (QA F-2). Holding the width lets the card overflow to an acceptable horizontal scroll instead. The authoritative 1536 layout is unaffected (3×380 + 2×48 = 1236 ≤ 1248 panel inner → no shrink there anyway). */
   background: var(--color-bg);               /* #FFFFFF */
   border: 1px solid var(--color-border);     /* 1px solid #9CA3AF (inside stroke) */
   border-radius: var(--radius-4);            /* 4px — the only radius in this module */

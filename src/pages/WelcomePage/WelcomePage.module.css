@@ -169,10 +169,24 @@
 /* Cropped overlay screenshots — taken out of flow and registered to the
    .previewItem box. The per-item rules below set width as the overlay-native /
    base-native ratio so each overlay renders at the same 0.5 scale as its base;
-   height: auto preserves the overlay's own aspect ratio. */
+   height: auto preserves the overlay's own aspect ratio.
+
+   max-width: none is REQUIRED here to exempt these overlays from the global
+   `img, picture, svg { max-width: 100% }` reset in styles/global.css. That
+   reset (a `max-width`) would otherwise WIN over the FOLLOW overlay's intended
+   `width: 105.75%` (846px over the 800px base) and clamp it back to 100%
+   (800px); with height: auto the overlay would then shrink to ~800x408 while
+   its base renders 800x428, leaving a ~20px strip of the base screenshot
+   exposed beneath the overlay and dropping the intended ~46px right overhang
+   (which is designed to land inside the panel's 48px right padding). Opting
+   these absolutely-positioned overlays out of the global clamp restores the
+   full-cover geometry (~846x431) with no base seam. `none` is a structural
+   keyword, so this stays token-driven per AAP §0.8. The LIKE overlay (92% =
+   368px < 400px base) is already under 100% and is unaffected by this. */
 .previewOverlay {
   position: absolute;
   height: auto;
+  max-width: none;
 }
 
 /* LIKE overlay (screenshot_like_overlay-8b1b9b.png, 736x304 native): the zoomed
