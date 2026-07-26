@@ -1,0 +1,8 @@
+/* Icon — thin wrapper around a pre-colored downloaded asset (<img>).
+   Structural only: sizing comes from width/height attributes set by the
+   component; no color/spacing tokens are needed here. */
+.icon {
+  display: block;        /* remove inline-image descender whitespace; predictable box */
+  flex-shrink: 0;        /* never shrink inside flex rows (Header brand row, Link prefix/suffix) */
+  object-fit: contain;   /* preserve aspect ratio if the box is ever constrained (non-square icons) */
+}

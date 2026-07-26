@@ -1,0 +1,118 @@
+/**
+ * PrincipleCard.module.css — co-located CSS Module for the PrincipleCard component.
+ * =============================================================================
+ * The repeated card in the "Key Principles" 3×2 grid (six instances:
+ * Efficiency, Consistency, Modularity, Accessibility, Flexibility, Clarity).
+ *
+ * Figma source (authoritative for every value below):
+ *   fileKey U1wiYiDtkktS3L2hsXteNO — component node 5845:45122
+ *   (instances 5845:45129 / 45136 / 45143 / 45150 / 45157) on screen
+ *   "Welcome" 5845:45077. Spec: AAP §0.3.3.
+ *
+ * Consumed by PrincipleCard.tsx via `import styles from './PrincipleCard.module.css'`.
+ * The component references EXACTLY these class names — keep them in sync:
+ *   card · cover · coverImage · body · title · description
+ *
+ * Token-driven styling (AAP §0.8, non-negotiable): every color, radius, spacing,
+ * dimension and typographic value resolves to a design token from
+ * src/styles/tokens.css (loaded once, first, by src/main.tsx). The card width
+ * (--card-width-principle), the cover image box (--principle-cover-width ×
+ * --principle-cover-height) and the 1px border / hairline (--border-width-1)
+ * all resolve through tokens; the ONLY non-token literals are structural
+ * keywords.
+ *
+ * Card box model: this module relies on the global `box-sizing: border-box`
+ * reset (src/styles/global.css) — matching Icon.module.css — so the tokenized
+ * 380px width is the card's total footprint with the 1px stroke drawn inside
+ * (Figma renders the card stroke as an inside/centered 1px line).
+ *
+ * The Figma design carries zero elevation and zero motion, so this module
+ * intentionally defines no shadow, blur, or motion effects of any kind.
+ */
+
+/* ---------------------------------------------------------------------------
+ * .card — the 380px card container (Figma 5845:45122)
+ * Vertical stack: [cover] then [body]. White surface, 1px #9CA3AF stroke,
+ * 4px radius; overflow:hidden so the cover's top corners follow the radius.
+ * ------------------------------------------------------------------------- */
+.card {
+  display: flex;
+  flex-direction: column;                    /* cover above body */
+  width: var(--card-width-principle);        /* 380px — exact Figma card width (token) */
+  flex-shrink: 0;                            /* hold the fixed 380px width as a flex item in the wrapping .principlesPanel — never shrink below it. .principlesPanel already wraps, so cards hold 380px down to a ~480px container (fine at 1280 two-column and 768 one-column); but without this, at the narrowest in-scope width (375px) the lone wrapped card shrinks far below 380px and the .card `overflow: hidden` CLIPS the title/description (QA F-2). Holding the width lets the card overflow to an acceptable horizontal scroll instead. The authoritative 1536 layout is unaffected (3×380 + 2×48 = 1236 ≤ 1248 panel inner → no shrink there anyway). */
+  background: var(--color-bg);               /* #FFFFFF */
+  border: var(--border-width-1) solid var(--color-border);  /* 1px solid #9CA3AF (inside stroke) */
+  border-radius: var(--radius-4);            /* 4px — the only radius in this module */
+  overflow: hidden;                          /* clip cover corners to the 4px radius */
+}
+
+/* ---------------------------------------------------------------------------
+ * .cover — illustrated cover panel (bg #E0E7FF)
+ * Holds the 304×192 principle illustration centered on the lavender panel.
+ * Fixed 192px height (the image's display height, with no vertical padding —
+ * measured from the Figma render): keeps the cover height deterministic and
+ * shows the #E0E7FF panel as a placeholder if the image is slow or fails.
+ * The image's own baked-in #E0E7FF background blends seamlessly with this fill
+ * at the ~37px left/right gutters left by centering the 304px image.
+ * ------------------------------------------------------------------------- */
+.cover {
+  display: flex;
+  align-items: center;                       /* center image vertically */
+  justify-content: center;                   /* center image horizontally */
+  height: var(--principle-cover-height);     /* 192px — exact Figma cover height (token) */
+  background: var(--color-icon-panel);       /* #E0E7FF */
+}
+
+/* ---------------------------------------------------------------------------
+ * .coverImage — the principle illustration <img>
+ * Rendered at exactly 304×192 (the Figma display size). Source PNGs are
+ * exported at 760×480 (2.5× of 304×192, identical aspect), so object-fit:
+ * contain scales them down cleanly with no distortion or cropping.
+ * No border/shadow on the image — the only stroke is the card border on .card.
+ * ------------------------------------------------------------------------- */
+.coverImage {
+  display: block;                            /* no inline descender whitespace */
+  width: var(--principle-cover-width);       /* 304px — exact Figma image width (token) */
+  height: var(--principle-cover-height);     /* 192px — exact Figma image height (token) */
+  object-fit: contain;                       /* preserve aspect on scale-down */
+}
+
+/* ---------------------------------------------------------------------------
+ * .body — title + description area below the cover
+ * Separated from the cover by the in-card hairline (a 1px #9CA3AF top border —
+ * a CSS border, NOT the full-width Divider component). Padding 16px vertical /
+ * 24px horizontal; title and description stacked with a 16px gap.
+ * ------------------------------------------------------------------------- */
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);                                  /* 16px title↔description gap */
+  padding: var(--space-16) var(--space-24);              /* 16px vertical · 24px horizontal */
+  border-block-start: var(--border-width-1) solid var(--color-border);  /* in-card hairline (1px #9CA3AF) */
+}
+
+/* ---------------------------------------------------------------------------
+ * .title — card title. text-card-title = Inter Medium 500, 24px/32px, #030712.
+ * Composed from granular tokens (tokens.css exposes no --text-* shorthand).
+ * ------------------------------------------------------------------------- */
+.title {
+  margin: 0;
+  font-family: var(--font-sans);                 /* Inter + system fallback stack */
+  font-weight: var(--font-weight-medium);        /* 500 */
+  font-size: var(--font-size-card-title);        /* 24px */
+  line-height: var(--line-height-card-title);    /* 32px */
+  color: var(--color-text);                      /* #030712 */
+}
+
+/* ---------------------------------------------------------------------------
+ * .description — card body copy. text-body = Inter Regular 400, 20px/28px, #030712.
+ * Wraps to multiple lines (global.css resets the default paragraph margin).
+ * ------------------------------------------------------------------------- */
+.description {
+  margin: 0;
+  font-family: var(--font-sans);                 /* Inter + system fallback stack */
+  font-weight: var(--font-weight-regular);       /* 400 */
+  font-size: var(--font-size-body);              /* 20px */
+  line-height: var(--line-height-body);          /* 28px */
+  color: var(--color-text);                      /* #030712 */
+}

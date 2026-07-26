@@ -1,0 +1,56 @@
+{
+  // ---------------------------------------------------------------------------
+  // tsconfig.node.json — TypeScript project reference for the Node/tooling tier
+  //
+  // Type-checks the build/tooling configuration that runs in the *Node* context
+  // (Vite's config and the Playwright screenshot-verification config), kept
+  // separate from the browser application code type-checked by ./tsconfig.json.
+  //
+  // The root ./tsconfig.json lists this file under `references`, so `tsc -b`
+  // (invoked by `npm run build`) builds this project first. TypeScript requires
+  // every referenced project to enable `composite`. A referenced composite
+  // project may NOT disable emit (TS6310) on the pinned TypeScript 5.9.x, so
+  // instead of `noEmit` the (throwaway) declaration/JS output is redirected into
+  // the git-ignored `node_modules/.tmp` cache via `outDir`; Vite performs the
+  // real bundling, so nothing here is ever shipped or committed.
+  //
+  // Conventions mirror the current Vite `react-ts` template (Vite 8 /
+  // TypeScript ~5.9): bundler-mode module resolution and a strict linting set.
+  // ---------------------------------------------------------------------------
+  "compilerOptions": {
+    // Required: this project is a `references` target of ./tsconfig.json, and
+    // referenced projects must be composite so `tsc -b` can track them.
+    "composite": true,
+    // Incremental build metadata; git-ignored via the `*.tsbuildinfo` rule.
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    // `composite` forces emit; send the throwaway .js/.d.ts into the git-ignored
+    // cache (never shipped) rather than beside the source files.
+    "outDir": "./node_modules/.tmp/node-build",
+
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    // No ambient `@types/*` packages are auto-included; the Node-context config
+    // files rely solely on the types shipped by their own imports (vite,
+    // @vitejs/plugin-react, @playwright/test).
+    "types": [],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "isolatedModules": true,
+
+    /* Strictness / linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  // Node-context tooling sources. `playwright.config.ts` is included per the
+  // current Vite template guidance (it too runs under Node, not the browser).
+  "include": ["vite.config.ts", "playwright.config.ts"]
+}

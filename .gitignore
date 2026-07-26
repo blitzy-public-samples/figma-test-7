@@ -1,0 +1,51 @@
+# ---------------------------------------------------------------------------
+# .gitignore — figma-test-7 (Vite 8 + React 19 + TypeScript 5.9)
+#
+# Ignores build output, dependencies, tool caches, and generated deliverables
+# (verification screenshots) while keeping all committed source, configuration,
+# and design assets under src/assets/** under version control. See AAP §0.6.1.
+# One pattern per line, grouped by concern.
+# ---------------------------------------------------------------------------
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Dependencies
+node_modules
+
+# Build output
+dist
+dist-ssr
+*.local
+
+# Vite / TypeScript caches
+.vite/
+*.tsbuildinfo
+
+# Generated verification screenshots (produced by `npm run screenshot`; a deliverable, not committed)
+screenshots/
+
+# Playwright artifacts
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Blitzy platform artifacts (subagent screenshots / recordings)
+blitzy/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

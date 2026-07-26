@@ -1,0 +1,256 @@
+/* =============================================================================
+ * WelcomePage.module.css — page-level layout for the composed "Welcome" screen
+ * -----------------------------------------------------------------------------
+ * Co-located CSS Module for WelcomePage.tsx
+ * (import styles from './WelcomePage.module.css'). It owns ONLY the page
+ * composition of the Figma "Welcome" screen (root frame 5845:45077,
+ * fileKey U1wiYiDtkktS3L2hsXteNO): the centered content column, the
+ * inter-section rhythm, the three light-gray section panels, and the
+ * "Like & Follow" preview scaffolding (raster screenshots with layered green
+ * arrows + handwritten annotations).
+ *
+ * Token-driven per AAP section 0.8: every color / spacing / radius / font /
+ * dimension value resolves to a var(--*) token declared in src/styles/tokens.css
+ * (imported once globally in src/main.tsx — this file imports nothing). The two
+ * preview base display widths resolve through --preview-base-like (400px) and
+ * --preview-base-follow (800px) — the @2x screenshots' half-scale sizes. The
+ * ONLY untokenized literals permitted are structural keywords (0, auto, 100%,
+ * 100vh, none, block, flex, relative, absolute, column, row, wrap, center,
+ * flex-start, normal) and the percentage offsets that place the preview overlays
+ * / arrows / annotations relative to those bases (see the scale-consistent
+ * coordinate system documented in the preview section).
+ *
+ * Responsibilities intentionally NOT owned here:
+ *   - the hero gradient + cover padding  -> Header component
+ *   - the 1-px section divider line       -> Divider component
+ *   - section heading/body typography     -> Section component
+ *   - card / link internals               -> their own *.module.css
+ *
+ * The design has NO elevation and NO motion, so this file declares no
+ * box-shadow, filter, transition, animation, or transform. Corner radius is
+ * uniform via var(--radius-4).
+ * ========================================================================== */
+
+/* ===== Page structure ===================================================== */
+
+/* Root wrapper. Caps the composition at the Figma frame width
+   (content-width + left page padding + right page padding = 1344 + 96 + 96 =
+   1536) using the token expression — never a hardcoded frame width — and
+   centers it on wider viewports via margin auto. The Header is the first flex
+   child and stretches to full width (default align-items: stretch), sitting
+   flush above .content with no gap so its gradient reads full-bleed. */
+.page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: calc(var(--content-width) + var(--space-96) + var(--space-96));
+  /* The Figma root frame (5845:45077) is a FIXED 1536x3324 artboard (AAP
+     section 0.3.1: "layout none, children absolutely stacked"). The stacked
+     content hugs to ~3273px, so the remaining height is trailing artboard space
+     below the terminal 96px bottom padding (there is no footer bar). Pinning the
+     page to the exact frame height via the token makes the full-page render
+     reproduce the artboard at exactly 1536x3324 — matching the authoritative
+     frame dimensions the screenshot deliverable is verified against. */
+  min-height: var(--frame-height);
+  margin: 0 auto;
+  background: var(--color-bg);
+}
+
+/* The content column below the hero. With global box-sizing: border-box, the
+   96 padding on all sides resolves the inner column to 1344 (= --content-width);
+   the bottom padding is the page's terminal spacing — there is NO footer bar.
+   The 64 gap separates the four sections and the three interleaved dividers. */
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-64);
+  padding: var(--space-96);
+}
+
+/* ===== Section panels (the three light-gray blocks) ======================= */
+
+/* Shared panel base — combined with a layout modifier on the same element,
+   e.g. class="panel principlesPanel". */
+.panel {
+  background: var(--color-panel);
+  padding: var(--space-48);
+  border-radius: var(--radius-4);
+}
+
+/* "Key Principles" — 3-across, 2-row wrap grid. Panel inner width
+   1344 - 48 - 48 = 1248; three 380-wide PrincipleCards + two 48 gaps = 1236,
+   which is <= 1248, so exactly 3 fit per row across 2 rows. */
+.principlesPanel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-48);
+}
+
+/* "Join Our Communities" — a single row of three 384-wide CommunityCards
+   (1152 + two 48 gaps = 1248 = the inner width). align-items: flex-start
+   top-aligns cards of unequal height. */
+.communitiesPanel {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-48);
+  align-items: flex-start;
+}
+
+/* ===== "Like & Follow" preview panel (raster stays raster, AAP section 0.8) =
+ * The two preview regions are raster screenshots placed as <img>; the cropped
+ * overlays, the hand-drawn green arrows, and the handwritten annotations are
+ * layered above them via absolute positioning. Their interior UI is NOT rebuilt
+ * as live DOM.
+ *
+ * SCALE-CONSISTENT COORDINATE SYSTEM
+ * ----------------------------------
+ * Both base screenshots are @2x raster exports shown at half their native size,
+ * so the whole group shares ONE 0.5 down-scale and the two bases tile the
+ * panel's 1248px inner width exactly:
+ *     LIKE base   800x800  native -> 400x400 display
+ *     FOLLOW base 1600x856 native -> 800x428 display
+ *     400 + 48 (gap) + 800 = 1248  (= 1344 outer - 48 - 48 padding)
+ * Every overlay / arrow / annotation is registered to its own .previewItem box
+ * and sized/placed in PERCENTAGES of that box (never native px), so each layer
+ * renders at the same 0.5 scale as its base and the two coordinate systems
+ * scale identically. Each overlay's width is its native width divided by the
+ * base's native width, which reproduces the exact 0.5 down-scale:
+ *     LIKE overlay   736 / 800   = 92%      (736x304 native  -> 368x152 display)
+ *     FOLLOW overlay 1692 / 1600 = 105.75%  (1692x863 native -> 846x431 display)
+ * The FOLLOW overlay is intentionally a hair wider than its base (a top-left
+ * near-full-bleed cover); its ~46px right overhang lands inside the panel's
+ * 48px right padding and never reaches the panel edge.
+ *
+ * The two per-instance geometries are selected STRUCTURALLY from .previewItem
+ * document order (first child = LIKE, last child = FOLLOW), because the consumer
+ * (WelcomePage.tsx) applies only the generic .previewOverlay / .previewArrow
+ * classes to both items; only the annotation carries a per-instance modifier
+ * (.annotationLike / .annotationFollow).
+ * ========================================================================== */
+
+/* Applied alongside .panel (inherits #F3F4F6 background, 48px padding, 4px
+   radius). Rows the two preview groups with the 48px inter-group gap; the two
+   items are sized to their bases (below) and sum to the 1248px inner width. */
+.previewPanel {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-48);
+  align-items: flex-start;
+}
+
+/* Positioning context for one preview group (base + overlay + arrow +
+   annotation). flex: 0 0 auto plus an explicit per-item width (below) fixes the
+   coordinate box so the absolute children resolve their percentages against the
+   base's exact display size. */
+.previewItem {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+/* LIKE group box: 800x800 native shown at half size. */
+.previewItem:first-child {
+  width: var(--preview-base-like);   /* 400px */
+}
+
+/* FOLLOW group box: 1600x856 native shown at half size. */
+.previewItem:last-child {
+  width: var(--preview-base-follow);  /* 800px */
+}
+
+/* Base screenshot (screenshot_like_base.png / screenshot_follow_base.png).
+   display: block removes inline-image descender whitespace; width: 100% fills
+   the fixed .previewItem box and height: auto preserves the native aspect ratio
+   (LIKE -> 400x400, FOLLOW -> 800x428). */
+.previewImage {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Cropped overlay screenshots — taken out of flow and registered to the
+   .previewItem box. The per-item rules below set width as the overlay-native /
+   base-native ratio so each overlay renders at the same 0.5 scale as its base;
+   height: auto preserves the overlay's own aspect ratio.
+
+   max-width: none is REQUIRED here to exempt these overlays from the global
+   `img, picture, svg { max-width: 100% }` reset in styles/global.css. That
+   reset (a `max-width`) would otherwise WIN over the FOLLOW overlay's intended
+   `width: 105.75%` (846px over the 800px base) and clamp it back to 100%
+   (800px); with height: auto the overlay would then shrink to ~800x408 while
+   its base renders 800x428, leaving a ~20px strip of the base screenshot
+   exposed beneath the overlay and dropping the intended ~46px right overhang
+   (which is designed to land inside the panel's 48px right padding). Opting
+   these absolutely-positioned overlays out of the global clamp restores the
+   full-cover geometry (~846x431) with no base seam. `none` is a structural
+   keyword, so this stays token-driven per AAP §0.8. The LIKE overlay (92% =
+   368px < 400px base) is already under 100% and is unaffected by this. */
+.previewOverlay {
+  position: absolute;
+  height: auto;
+  max-width: none;
+}
+
+/* LIKE overlay (screenshot_like_overlay-8b1b9b.png, 736x304 native): the zoomed
+   real listing that covers the file card's title + metadata band. */
+.previewItem:first-child .previewOverlay {
+  top: 8%;
+  left: 4%;
+  width: 92%;
+}
+
+/* FOLLOW overlay (screenshot_follow_overlay-30152e.png, 1692x863 native): a
+   top-left near-full-bleed cover of the profile base. */
+.previewItem:last-child .previewOverlay {
+  top: 0;
+  left: 0;
+  width: 105.75%;
+}
+
+/* Hand-drawn green arrows — out of flow, positioned by percentage of the base
+   so they keep pointing at their target button at the group's 0.5 scale. Each
+   SVG renders at its intrinsic design size (LIKE 72x49, FOLLOW 114x49). */
+.previewArrow {
+  position: absolute;
+}
+
+/* LIKE arrow -> the red-heart "like" button (button center ~56% across / ~56%
+   down the 400x400 base); the arrowhead meets the button from above-right. */
+.previewItem:first-child .previewArrow {
+  top: 52%;
+  left: 56%;
+}
+
+/* FOLLOW arrow -> the blue "Follow" button (button center ~6% across / ~28%
+   down the 800x428 base); the arrow's lower-left head lands on the button while
+   its body sweeps up-right. */
+.previewItem:last-child .previewArrow {
+  top: 17%;
+  left: 8%;
+}
+
+/* Handwritten annotation base ("like!" / "follow"): Bubblegum Sans, regular
+   weight, accent green, out of flow. The consumer applies .annotation together
+   with one per-instance modifier below, which sets the size + percentage
+   placement beside the matching arrow. */
+.annotation {
+  position: absolute;
+  margin: 0;
+  font-family: var(--font-hand);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-accent-green);
+  line-height: normal;
+}
+
+/* "like!" — sits beside the like arrow's tail, above the heart button. */
+.annotationLike {
+  top: 43%;
+  left: 64%;
+  font-size: var(--font-size-hand-lg);   /* "like!" — 32px (token) */
+}
+
+/* "follow" — sits beside the follow arrow's tail, above-right of the button. */
+.annotationFollow {
+  top: 9%;
+  left: 23%;
+  font-size: var(--font-size-hand-sm);   /* "follow" — 28px (token) */
+}

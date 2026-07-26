@@ -1,0 +1,89 @@
+/**
+ * CommunityCard.module.css — co-located CSS Module for CommunityCard.tsx
+ * =============================================================================
+ * The repeated card in the "Join Our Communities" section of the Welcome page.
+ * WelcomePage renders three instances in a row inside the light-gray panel:
+ * Figma Community, Discord, and X. Each card is a centered brand-logo showcase
+ * (top) + a 1px in-card hairline + a footer row holding the brand name and a
+ * "Visit" external link.
+ *
+ * Design source (authoritative, read-only): Figma component node 5845:45179
+ * ("Welcome" screen 5845:45077, fileKey U1wiYiDtkktS3L2hsXteNO). Values are
+ * transcribed VERBATIM from the reconciled specification (AAP §0.3.3) — no
+ * approximation or substitution.
+ *
+ * Token-driven styling (AAP §0.8): every color, radius, spacing, dimension and
+ * typographic value resolves to a var(--token) defined in src/styles/tokens.css
+ * (loaded first by src/main.tsx). The card width (--card-width-community), the
+ * logo-showcase height (--community-showcase-height) and the 1px border/hairline
+ * (--border-width-1) all resolve through tokens; the ONLY non-token literals are
+ * structural keywords. (The EXACT per-brand logo box — 192×96 / 124×124 /
+ * 72×72 — is set as width/height HTML attributes by CommunityCard.tsx, not
+ * here; this module keeps only a non-distorting guard for the logo.)
+ *
+ * Deliberately absent (the Figma design contains none): shadows/elevation,
+ * filters, transitions/animations/@keyframes/transforms, and :hover/:focus
+ * restyling. Do not add any.
+ *
+ * Class-name contract with CommunityCard.tsx (keep in sync): exactly five
+ * selectors — card, showcase, logo, footer, brandName.
+ */
+
+/* Card box — 384px wide, white, 1px #9CA3AF border, 4px radius (Figma 5845:45179).
+   `overflow: hidden` clips the showcase's top corners to the 4px radius. */
+.card {
+  width: var(--card-width-community);    /* 384px — exact Figma card width (token) */
+  flex-shrink: 0;                        /* hold the fixed 384px width as a flex item in .communitiesPanel — never shrink below it (mirrors the accepted .previewItem { flex: 0 0 auto } idiom). Without this, the default flex-shrink:1 lets the card collapse below 384px when the row is narrower than its content, and the .card `overflow: hidden` then CLIPS the logo/brand name/Visit link and can hide them entirely (QA F-1). Holding the width instead drives an acceptable horizontal scroll — the authoritative 1536/1920 layout is unaffected because there the row already fits exactly (3×384 + 2×48 = 1248 = the 1248px panel inner). */
+  background: var(--color-bg);           /* #FFFFFF */
+  border: var(--border-width-1) solid var(--color-border); /* 1px solid #9CA3AF */
+  border-radius: var(--radius-4);        /* 4px */
+  overflow: hidden;                      /* respect the 4px radius at the top corners */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Logo showcase (top) — fixed 200px band that centers the brand logo both
+   horizontally and vertically (Figma h200). */
+.showcase {
+  height: var(--community-showcase-height); /* 200px — exact Figma showcase height (AAP §0.3.3 "h200") (token) */
+  background: var(--color-bg);           /* #FFFFFF */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The brand-logo <img>. Its EXACT per-brand display box (192×96 Figma
+   Community, 124×124 Discord, 72×72 X) is set as width/height HTML attributes
+   by CommunityCard.tsx (derived from brandName), so THAT box is authoritative.
+   This rule is only a NON-DISTORTING GUARD: `object-fit: contain` preserves the
+   logo's aspect ratio within its explicit box, and `max-width: 100%` prevents a
+   logo from ever exceeding the showcase width. No fixed height is imposed here,
+   so the explicit per-brand box is never overridden or clipped. */
+.logo {
+  display: block;                        /* remove inline-image descender whitespace */
+  max-width: 100%;                       /* never exceed the showcase/card width */
+  object-fit: contain;                   /* preserve aspect ratio within the explicit box */
+}
+
+/* Footer row — a 1px #9CA3AF in-card hairline on top (a CSS border, NOT the
+   Divider component), 24px padding, brand name at the start and Visit link at
+   the end. */
+.footer {
+  border-top: var(--border-width-1) solid var(--color-border); /* the in-card hairline (#9CA3AF) */
+  padding: var(--space-24);                  /* 24px */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;            /* brand name (start) ↔ Visit link (end) */
+}
+
+/* Brand name — text-card-title composed from granular tokens: Inter / 500 /
+   24px / 32px / #030712. `margin: 0` is defensive (rendered as <h3>; global.css
+   already resets heading margins). */
+.brandName {
+  margin: 0;
+  font-family: var(--font-sans);              /* Inter + system fallback stack */
+  font-weight: var(--font-weight-medium);     /* 500 */
+  font-size: var(--font-size-card-title);     /* 24px */
+  line-height: var(--line-height-card-title); /* 32px */
+  color: var(--color-text);                   /* #030712 */
+}

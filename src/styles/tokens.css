@@ -1,0 +1,103 @@
+/**
+ * tokens.css — Global design-token layer (single source of visual truth)
+ * =============================================================================
+ * First of three global stylesheets, imported ONCE by src/main.tsx BEFORE
+ * fonts.css and global.css. Every value below is a CONFIRMED token transcribed
+ * VERBATIM from the reconciled Figma "Welcome" specification (AAP §0.3.2 Token
+ * Manifest) — no approximation, rounding, renaming, or substitution.
+ *
+ * Design source (read-only, authoritative for all values):
+ *   Figma fileKey U1wiYiDtkktS3L2hsXteNO, node 5845:45077 ("Welcome", 1536×3324)
+ *
+ * Contract: these custom-property NAMES are consumed by every component
+ * *.module.css and the page CSS via var(--token); do NOT rename them. All
+ * component styling resolves color/spacing/typography exclusively through these
+ * tokens — the only permitted non-token literals downstream are structural
+ * (0, auto, 100%, none, transparent, currentColor, inherit).
+ *
+ * Deliberately absent by design (the Figma spec contains neither): no
+ * elevation/depth-effect tokens and no motion/timing tokens. Do not add any.
+ *
+ * This is a plain global stylesheet (NOT a CSS Module) and imports nothing.
+ */
+
+:root {
+  /* ===== Colors (AAP §0.3.2 — all CONFIRMED) ===== */
+  --color-bg: #FFFFFF;              /* page/card/community-card background */
+  --color-text: #030712;           /* primary text (headings, body, card titles, visit links) */
+  --color-border: #9CA3AF;         /* section dividers + card/panel 1px borders + in-card hairlines */
+  --color-panel: #F3F4F6;          /* light-gray section panels (Like&Follow, Key Principles, Communities) */
+  --color-link: #1D4ED8;           /* community-page link text + its blue external-link icon */
+  --color-accent-green: #15803D;   /* handwritten "like!"/"follow" annotations */
+  --color-icon-panel: #E0E7FF;     /* PrincipleCard cover-panel background (recurs 6x) */
+
+  /* ===== Gradient (hero band only) ===== */
+  --gradient-hero: linear-gradient(70deg, #312E81 3%, #4338CA 91%);
+
+  /* ===== Spacing scale ===== */
+  --space-96: 96px;   /* page padding, hero cover horizontal padding */
+  --space-64: 64px;   /* inter-section gap, hero cover vertical padding */
+  --space-48: 48px;   /* panel padding, hero gap */
+  --space-32: 32px;
+  --space-24: 24px;   /* intra-section (heading↔body) gap, card row padding */
+  --space-16: 16px;   /* card title padding */
+  --space-8: 8px;     /* fine gaps: logo symbol↔wordmark & icon↔label in the header link and the Link component (Figma-measured 8px) */
+
+  /* ===== Border / stroke widths ===== */
+  /* The reconciled Figma "Welcome" spec draws every hairline at a uniform 1px:
+     the 3 section dividers, all 9 card outer strokes, and every in-card hairline.
+     Tokenizing it keeps those strokes in lock-step and honors the token-driven
+     mandate (AAP §0.8) — 1px is NOT one of the structural exceptions. */
+  --border-width-1: 1px;
+
+  /* ===== Sizing ===== */
+  --content-width: 1344px;   /* centered content column */
+  --frame-height: 3324px;    /* Figma "Welcome" fixed frame height (5845:45077) — page pins to this exact artboard height (1536x3324) */
+
+  /* Component display dimensions — exact Figma measurements shared across the
+     card components and the "Like & Follow" preview scaffolding. Kept here (not
+     as component-local literals) so every fixed footprint resolves through the
+     single token source per AAP §0.8. */
+  --card-width-principle: 380px;      /* PrincipleCard footprint (Figma 5845:45122) */
+  --card-width-community: 384px;      /* CommunityCard footprint (Figma 5845:45179) */
+  --principle-cover-width: 304px;     /* PrincipleCard illustration display width */
+  --principle-cover-height: 192px;    /* PrincipleCard cover-panel height == illustration display height */
+  --community-showcase-height: 200px; /* CommunityCard logo-showcase band height (Figma "h200") */
+  --preview-base-like: 400px;         /* LIKE preview base display width (800px @2x shown at half scale) */
+  --preview-base-follow: 800px;       /* FOLLOW preview base display width (1600px @2x shown at half scale) */
+
+  /* ===== Radius (uniform across all cards, panels, image strokes) ===== */
+  --radius-4: 4px;
+
+  /* ===== Font families ===== */
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-hand: 'Bubblegum Sans', cursive;
+  --font-wordmark: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+  /* ===== Font weights ===== */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;    /* wordmark only */
+
+  /* ===== Font sizes ===== */
+  --font-size-h1: 48px;
+  --font-size-h2: 36px;
+  --font-size-body: 20px;
+  --font-size-card-title: 24px;
+  --font-size-hero-subtext: 18px;
+  --font-size-link-lg: 18px;
+  --font-size-link-sm: 16px;
+  --font-size-wordmark: 27px;
+  --font-size-hand-lg: 32px;
+  --font-size-hand-sm: 28px;
+
+  /* ===== Line heights ===== */
+  --line-height-h1: 48px;
+  --line-height-h2: 40px;
+  --line-height-body: 28px;
+  --line-height-card-title: 32px;
+  --line-height-hero-subtext: 28px;
+  --line-height-link-lg: 28px;
+  --line-height-link-sm: 24px;
+}

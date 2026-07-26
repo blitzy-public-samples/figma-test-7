@@ -1,0 +1,20 @@
+/* Divider — 1px full-width horizontal section separator (pure CSS, no image).
+   Reproduces the Figma Divider component node 4796:80537 (Kind=Default,
+   Orientation=Horizontal). Divider.tsx applies this class to an <hr> via
+   styles.divider, so the user-agent default <hr> border is removed and the
+   visible line is drawn solely by height + background-color.
+
+   Token-driven (AAP 0.8): the line color resolves through --color-border and
+   its 1px thickness through --border-width-1, both defined on :root in
+   src/styles/tokens.css (imported once globally by src/main.tsx). The only
+   other values here are structural (100%, 0, none). Deliberately no vertical
+   margin — WelcomePage owns the 64px inter-section gap via its flex layout, so
+   the divider must not add spacing. No elevation and no motion: the reconciled
+   Figma spec defines neither. */
+.divider {
+  border: none;
+  height: var(--border-width-1);   /* 1px hairline (shared stroke token) */
+  width: 100%;
+  margin: 0;
+  background-color: var(--color-border);
+}

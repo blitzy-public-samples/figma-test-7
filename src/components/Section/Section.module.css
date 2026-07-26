@@ -1,0 +1,66 @@
+/*
+ * Section.module.css — CSS Module for the `Section` layout helper.
+ * =============================================================================
+ * `Section` is a code-only layout primitive that standardizes the recurring
+ * "H2 heading + body (+ optional panel)" block used by three content sections
+ * of the Figma "Welcome" screen:
+ *   - "Design 20x faster"        → Figma node 5845:45079
+ *   - "Key Principles"           → Figma node 5845:45115
+ *   - "Join Our Communities"     → Figma node 5845:45166
+ * (fileKey U1wiYiDtkktS3L2hsXteNO, screen 5845:45077). The SemiBold heading
+ * variant applies only to the "Like & Follow us on Figma Community!" heading
+ * (Figma node 5845:45093).
+ *
+ * Contract (do NOT rename): the four class names below are imported by the
+ * co-located `Section.tsx` as `import styles from './Section.module.css'` and
+ * referenced as styles.section, styles.heading, styles.headingSemibold, and
+ * styles.body.
+ *
+ * Token-driven per AAP §0.8: every color / spacing / font value resolves to a
+ * CSS custom property from src/styles/tokens.css (global via main.tsx — this
+ * module imports nothing). The only literals used are structural (0, flex
+ * keywords). No shadow/elevation and no motion (transition/animation/transform)
+ * anywhere — the design contains none (AAP §0.3.2, §0.6.3).
+ *
+ * Scope note: this module owns ONLY the section's internal vertical rhythm and
+ * typography. The 1344-pixel content column and 96-pixel page padding are
+ * owned by WelcomePage.module.css, so no width / max-width / padding is set
+ * here.
+ */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24); /* 24 pixels gap between the heading and the body/panel block */
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16); /* 16 pixels gap between heading text and an OPTIONAL trailing icon (the 40x40 outline heart). CONFIRMED from the frozen create-schema / WelcomePage consumer contract and Figma node 5845:45093 ("Like & Follow" heading): the heading-text↔heart auto-layout gap is 16px (--space-16). Only the SemiBold "Like & Follow" heading has a trailing icon, so this gap is inert for the three single-text headings — do not add manual whitespace in the heading node. */
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-medium); /* 500 — CONFIRMED text-h2 (default variant) */
+  font-size: var(--font-size-h2);          /* 36 pixels */
+  line-height: var(--line-height-h2);      /* 40 pixels */
+  color: var(--color-text);                /* primary text color */
+}
+
+.headingSemibold {
+  /* Modifier applied ALONGSIDE .heading. Raises weight only (family/size/
+     line-height/color stay identical) for the CONFIRMED text-h2-semibold style
+     used exclusively by the "Like & Follow" heading (Figma 5845:45093). */
+  font-weight: var(--font-weight-semibold); /* 600 */
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24); /* 24 pixels gap between multiple paragraphs and/or a paragraph + panel */
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-regular); /* 400 — CONFIRMED text-body */
+  font-size: var(--font-size-body);         /* 20 pixels */
+  line-height: var(--line-height-body);     /* 28 pixels */
+  color: var(--color-text);                 /* primary text color */
+}
