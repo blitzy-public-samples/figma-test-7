@@ -9,15 +9,16 @@
  * "Like & Follow" preview scaffolding (raster screenshots with layered green
  * arrows + handwritten annotations).
  *
- * Token-driven per AAP section 0.8: every color / spacing / radius / font value
- * resolves to a var(--*) token declared in src/styles/tokens.css (imported once
- * globally in src/main.tsx — this file imports nothing). The ONLY untokenized
- * literals permitted are structural keywords (0, auto, 100%, 100vh, none,
- * block, flex, relative, absolute, column, row, wrap, center, flex-start,
- * normal), the two preview base display widths (400px / 800px — the @2x
- * screenshots' half-scale sizes), and the percentage offsets that place the
- * preview overlays / arrows / annotations relative to those bases (see the
- * scale-consistent coordinate system documented in the preview section).
+ * Token-driven per AAP section 0.8: every color / spacing / radius / font /
+ * dimension value resolves to a var(--*) token declared in src/styles/tokens.css
+ * (imported once globally in src/main.tsx — this file imports nothing). The two
+ * preview base display widths resolve through --preview-base-like (400px) and
+ * --preview-base-follow (800px) — the @2x screenshots' half-scale sizes. The
+ * ONLY untokenized literals permitted are structural keywords (0, auto, 100%,
+ * 100vh, none, block, flex, relative, absolute, column, row, wrap, center,
+ * flex-start, normal) and the percentage offsets that place the preview overlays
+ * / arrows / annotations relative to those bases (see the scale-consistent
+ * coordinate system documented in the preview section).
  *
  * Responsibilities intentionally NOT owned here:
  *   - the hero gradient + cover padding  -> Header component
@@ -148,12 +149,12 @@
 
 /* LIKE group box: 800x800 native shown at half size. */
 .previewItem:first-child {
-  width: 400px;
+  width: var(--preview-base-like);   /* 400px */
 }
 
 /* FOLLOW group box: 1600x856 native shown at half size. */
 .previewItem:last-child {
-  width: 800px;
+  width: var(--preview-base-follow);  /* 800px */
 }
 
 /* Base screenshot (screenshot_like_base.png / screenshot_follow_base.png).

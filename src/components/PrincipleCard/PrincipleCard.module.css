@@ -13,17 +13,18 @@
  * The component references EXACTLY these class names — keep them in sync:
  *   card · cover · coverImage · body · title · description
  *
- * Token-driven styling (AAP §0.8, non-negotiable): every color, radius, spacing
- * and typographic value resolves to a design token from src/styles/tokens.css
- * (loaded once, first, by src/main.tsx). The ONLY non-token literals used here
- * are structural keywords and the four component-specific Figma measurements
- * that have no token: the card width (380px), the cover image (304px × 192px)
- * and the 1px border / hairline widths.
+ * Token-driven styling (AAP §0.8, non-negotiable): every color, radius, spacing,
+ * dimension and typographic value resolves to a design token from
+ * src/styles/tokens.css (loaded once, first, by src/main.tsx). The card width
+ * (--card-width-principle), the cover image box (--principle-cover-width ×
+ * --principle-cover-height) and the 1px border / hairline (--border-width-1)
+ * all resolve through tokens; the ONLY non-token literals are structural
+ * keywords.
  *
  * Card box model: this module relies on the global `box-sizing: border-box`
- * reset (src/styles/global.css) — matching Icon.module.css — so the 380px width
- * is the card's total footprint with the 1px stroke drawn inside (Figma renders
- * the card stroke as an inside/centered 1px line).
+ * reset (src/styles/global.css) — matching Icon.module.css — so the tokenized
+ * 380px width is the card's total footprint with the 1px stroke drawn inside
+ * (Figma renders the card stroke as an inside/centered 1px line).
  *
  * The Figma design carries zero elevation and zero motion, so this module
  * intentionally defines no shadow, blur, or motion effects of any kind.
@@ -37,10 +38,10 @@
 .card {
   display: flex;
   flex-direction: column;                    /* cover above body */
-  width: 380px;                              /* exact Figma card width (no token) */
+  width: var(--card-width-principle);        /* 380px — exact Figma card width (token) */
   flex-shrink: 0;                            /* hold the fixed 380px width as a flex item in the wrapping .principlesPanel — never shrink below it. .principlesPanel already wraps, so cards hold 380px down to a ~480px container (fine at 1280 two-column and 768 one-column); but without this, at the narrowest in-scope width (375px) the lone wrapped card shrinks far below 380px and the .card `overflow: hidden` CLIPS the title/description (QA F-2). Holding the width lets the card overflow to an acceptable horizontal scroll instead. The authoritative 1536 layout is unaffected (3×380 + 2×48 = 1236 ≤ 1248 panel inner → no shrink there anyway). */
   background: var(--color-bg);               /* #FFFFFF */
-  border: 1px solid var(--color-border);     /* 1px solid #9CA3AF (inside stroke) */
+  border: var(--border-width-1) solid var(--color-border);  /* 1px solid #9CA3AF (inside stroke) */
   border-radius: var(--radius-4);            /* 4px — the only radius in this module */
   overflow: hidden;                          /* clip cover corners to the 4px radius */
 }
@@ -58,7 +59,7 @@
   display: flex;
   align-items: center;                       /* center image vertically */
   justify-content: center;                   /* center image horizontally */
-  height: 192px;                             /* exact Figma cover height (no token) */
+  height: var(--principle-cover-height);     /* 192px — exact Figma cover height (token) */
   background: var(--color-icon-panel);       /* #E0E7FF */
 }
 
@@ -71,8 +72,8 @@
  * ------------------------------------------------------------------------- */
 .coverImage {
   display: block;                            /* no inline descender whitespace */
-  width: 304px;                              /* exact Figma image width (no token) */
-  height: 192px;                             /* exact Figma image height (no token) */
+  width: var(--principle-cover-width);       /* 304px — exact Figma image width (token) */
+  height: var(--principle-cover-height);     /* 192px — exact Figma image height (token) */
   object-fit: contain;                       /* preserve aspect on scale-down */
 }
 
@@ -87,7 +88,7 @@
   flex-direction: column;
   gap: var(--space-16);                                  /* 16px title↔description gap */
   padding: var(--space-16) var(--space-24);              /* 16px vertical · 24px horizontal */
-  border-block-start: 1px solid var(--color-border);     /* in-card hairline (1px #9CA3AF) */
+  border-block-start: var(--border-width-1) solid var(--color-border);  /* in-card hairline (1px #9CA3AF) */
 }
 
 /* ---------------------------------------------------------------------------

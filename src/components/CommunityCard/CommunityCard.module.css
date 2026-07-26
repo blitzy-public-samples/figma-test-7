@@ -12,12 +12,12 @@
  * transcribed VERBATIM from the reconciled specification (AAP §0.3.3) — no
  * approximation or substitution.
  *
- * Token-driven styling (AAP §0.8): every color, radius, spacing, and
+ * Token-driven styling (AAP §0.8): every color, radius, spacing, dimension and
  * typographic value resolves to a var(--token) defined in src/styles/tokens.css
- * (loaded first by src/main.tsx). The ONLY non-token literals are structural
- * keywords and the component-specific pixel dimensions that have no token:
- * the card width (384px), the logo-showcase height (200px), and the 1px
- * border/hairline widths. (The EXACT per-brand logo box — 192×96 / 124×124 /
+ * (loaded first by src/main.tsx). The card width (--card-width-community), the
+ * logo-showcase height (--community-showcase-height) and the 1px border/hairline
+ * (--border-width-1) all resolve through tokens; the ONLY non-token literals are
+ * structural keywords. (The EXACT per-brand logo box — 192×96 / 124×124 /
  * 72×72 — is set as width/height HTML attributes by CommunityCard.tsx, not
  * here; this module keeps only a non-distorting guard for the logo.)
  *
@@ -32,10 +32,10 @@
 /* Card box — 384px wide, white, 1px #9CA3AF border, 4px radius (Figma 5845:45179).
    `overflow: hidden` clips the showcase's top corners to the 4px radius. */
 .card {
-  width: 384px;                          /* exact Figma card width — no token exists */
+  width: var(--card-width-community);    /* 384px — exact Figma card width (token) */
   flex-shrink: 0;                        /* hold the fixed 384px width as a flex item in .communitiesPanel — never shrink below it (mirrors the accepted .previewItem { flex: 0 0 auto } idiom). Without this, the default flex-shrink:1 lets the card collapse below 384px when the row is narrower than its content, and the .card `overflow: hidden` then CLIPS the logo/brand name/Visit link and can hide them entirely (QA F-1). Holding the width instead drives an acceptable horizontal scroll — the authoritative 1536/1920 layout is unaffected because there the row already fits exactly (3×384 + 2×48 = 1248 = the 1248px panel inner). */
   background: var(--color-bg);           /* #FFFFFF */
-  border: 1px solid var(--color-border); /* 1px solid #9CA3AF */
+  border: var(--border-width-1) solid var(--color-border); /* 1px solid #9CA3AF */
   border-radius: var(--radius-4);        /* 4px */
   overflow: hidden;                      /* respect the 4px radius at the top corners */
   display: flex;
@@ -45,7 +45,7 @@
 /* Logo showcase (top) — fixed 200px band that centers the brand logo both
    horizontally and vertically (Figma h200). */
 .showcase {
-  height: 200px;                         /* exact Figma showcase height (AAP §0.3.3 "h200") — no token */
+  height: var(--community-showcase-height); /* 200px — exact Figma showcase height (AAP §0.3.3 "h200") (token) */
   background: var(--color-bg);           /* #FFFFFF */
   display: flex;
   align-items: center;
@@ -69,7 +69,7 @@
    Divider component), 24px padding, brand name at the start and Visit link at
    the end. */
 .footer {
-  border-top: 1px solid var(--color-border); /* the in-card hairline (#9CA3AF) */
+  border-top: var(--border-width-1) solid var(--color-border); /* the in-card hairline (#9CA3AF) */
   padding: var(--space-24);                  /* 24px */
   display: flex;
   align-items: center;

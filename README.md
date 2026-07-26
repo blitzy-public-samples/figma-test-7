@@ -23,7 +23,7 @@ There is **no router** and **no state-management library**: the deliverable is a
 
 ## Prerequisites
 
-- **[Node.js](https://nodejs.org/) 22.x (Active LTS).** The version is pinned in [`.nvmrc`](./.nvmrc) — run `nvm use` to select it — and declared in [`package.json`](./package.json) via `engines` (`node >=22.12.0`).
+- **[Node.js](https://nodejs.org/) 22.x (Active LTS).** The version is declared in [`package.json`](./package.json) via `engines` (`node >=22.12.0`) and pinned in [`.nvmrc`](./.nvmrc). If you use [nvm](https://github.com/nvm-sh/nvm) (optional — it is **not** a required prerequisite), run `nvm use` in the project root to select it; otherwise install Node.js 22.x directly from [nodejs.org](https://nodejs.org/) (or your platform's package manager). Either way, confirm the active version with `node -v` (expect `v22.x`).
 - **npm** as the package manager (bundled with Node.js).
 
 > Vite 8 requires Node.js `20.19+` or `22.12+`. Node.js 22.12+ satisfies this requirement.
@@ -54,13 +54,14 @@ Type-check and build for production (`tsc -b && vite build`):
 npm run build
 ```
 
-Serve the production build locally:
+Serve the production build locally. This runs `vite preview`, which serves the contents of `dist/`, so **run `npm run build` first** — with no prior build (or an empty/stale `dist/`) the preview server still starts and listens on the port but serves `404`s:
 
 ```bash
+npm run build   # produces dist/ (skip if you just built)
 npm run preview
 ```
 
-Capture verification screenshots — runs `node scripts/capture-screenshots.mjs`, which boots the preview server, sets a **1536 px** viewport width, and captures the full-page render into `screenshots/` (which is git-ignored). Requires a prior `npm run build` so `dist/` exists for the preview server to serve. This is the fidelity-verification deliverable:
+Capture verification screenshots — runs `node scripts/capture-screenshots.mjs`, which boots the preview server, sets a **1536 px** viewport width, and captures the full-page render to **`screenshots/welcome.png`** (a **1536 × 3324** PNG — the full artboard; the `screenshots/` directory is git-ignored). The file uses a stable name, so each run overwrites the previous `welcome.png`. Requires a prior `npm run build` so `dist/` exists for the preview server to serve. This is the fidelity-verification deliverable:
 
 ```bash
 npm run screenshot

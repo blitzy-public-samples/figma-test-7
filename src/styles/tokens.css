@@ -41,10 +41,30 @@
   --space-32: 32px;
   --space-24: 24px;   /* intra-section (heading↔body) gap, card row padding */
   --space-16: 16px;   /* card title padding */
+  --space-8: 8px;     /* fine gaps: logo symbol↔wordmark & icon↔label in the header link and the Link component (Figma-measured 8px) */
+
+  /* ===== Border / stroke widths ===== */
+  /* The reconciled Figma "Welcome" spec draws every hairline at a uniform 1px:
+     the 3 section dividers, all 9 card outer strokes, and every in-card hairline.
+     Tokenizing it keeps those strokes in lock-step and honors the token-driven
+     mandate (AAP §0.8) — 1px is NOT one of the structural exceptions. */
+  --border-width-1: 1px;
 
   /* ===== Sizing ===== */
   --content-width: 1344px;   /* centered content column */
   --frame-height: 3324px;    /* Figma "Welcome" fixed frame height (5845:45077) — page pins to this exact artboard height (1536x3324) */
+
+  /* Component display dimensions — exact Figma measurements shared across the
+     card components and the "Like & Follow" preview scaffolding. Kept here (not
+     as component-local literals) so every fixed footprint resolves through the
+     single token source per AAP §0.8. */
+  --card-width-principle: 380px;      /* PrincipleCard footprint (Figma 5845:45122) */
+  --card-width-community: 384px;      /* CommunityCard footprint (Figma 5845:45179) */
+  --principle-cover-width: 304px;     /* PrincipleCard illustration display width */
+  --principle-cover-height: 192px;    /* PrincipleCard cover-panel height == illustration display height */
+  --community-showcase-height: 200px; /* CommunityCard logo-showcase band height (Figma "h200") */
+  --preview-base-like: 400px;         /* LIKE preview base display width (800px @2x shown at half scale) */
+  --preview-base-follow: 800px;       /* FOLLOW preview base display width (1600px @2x shown at half scale) */
 
   /* ===== Radius (uniform across all cards, panels, image strokes) ===== */
   --radius-4: 4px;

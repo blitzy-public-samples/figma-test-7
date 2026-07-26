@@ -15,12 +15,12 @@
  *       var(--color-text), Inter 500, 16/24, underlined
  *       ("Visit", reused inside CommunityCard)
  *
- * TOKEN-DRIVEN STYLING (AAP §0.8): every color / font / size / line-height
- * resolves to a var(--token) declared in src/styles/tokens.css. tokens.css is
- * cascaded globally ONCE by src/main.tsx before this module, so NO @import is
- * needed (and none is used). The only permitted non-token literals are
- * structural (inline-flex, center, underline, fit-content) plus the verified
- * icon↔label gap documented on .link below.
+ * TOKEN-DRIVEN STYLING (AAP §0.8): every color / font / size / line-height /
+ * spacing resolves to a var(--token) declared in src/styles/tokens.css. tokens
+ * .css is cascaded globally ONCE by src/main.tsx before this module, so NO
+ * @import is needed (and none is used). The only permitted non-token literals
+ * are structural (inline-flex, center, underline, fit-content); the icon↔label
+ * gap resolves through --space-8.
  *
  * FLAT DESIGN — the reconciled Figma "Welcome" spec has no elevation and no
  * motion, so this module intentionally declares NO box-shadow, NO filter, and
@@ -39,12 +39,9 @@
 .link {
   display: inline-flex;
   align-items: center;                     /* vertically center the prefix/suffix icons against the text */
-  gap: 8px;                                /* icon↔label gap — verified from the Figma "Welcome" render:
-                                            * the visit-link row measures 8px and the community-link row
-                                            * measures the same within rounding. No spacing token matches
-                                            * (the scale starts at --space-16 = 16px), so the exact design
-                                            * value is applied as a structural literal — visual fidelity is
-                                            * the overriding constraint (AAP §0.1.2 / §0.8). */
+  gap: var(--space-8);                     /* 8px icon↔label gap — verified from the Figma "Welcome" render
+                                            * (both the visit-link and community-link rows measure 8px);
+                                            * resolves through the --space-8 token (AAP §0.8). */
   width: fit-content;                      /* occupy only content width (a visit link sits inside a CommunityCard row) */
   font-family: var(--font-sans);           /* Inter stack */
   font-weight: var(--font-weight-medium);  /* 500 */

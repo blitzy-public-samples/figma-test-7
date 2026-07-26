@@ -12,10 +12,9 @@
  * gradient / font value resolves to a var(--token) from src/styles/tokens.css
  * (imported globally by src/main.tsx before any component). The only permitted
  * non-token literals are structural (0, auto, 100%, none, normal, and layout
- * keywords) plus the two Figma-measured 8px small gaps (symbol↔wordmark and
- * icon↔label) that fall below the coarse spacing-token scale (which starts at
- * 16px) — each is annotated inline. There is no dedicated white-text token, so
- * all white hero foreground uses var(--color-bg).
+ * keywords); the two Figma-measured 8px small gaps (symbol↔wordmark and
+ * icon↔label) now resolve through the --space-8 token. There is no dedicated
+ * white-text token, so all white hero foreground uses var(--color-bg).
  *
  * Deliberately absent (the Figma spec contains none): no shadow / elevation
  * (no box-shadow / filter / text-shadow), no motion (no transition / animation /
@@ -57,7 +56,7 @@
 .lockup {
   display: flex;
   align-items: center;
-  gap: 8px; /* Figma-measured 8px — symbol↔wordmark; no --space-8 token exists (pixel fidelity, AAP §0.8) */
+  gap: var(--space-8); /* 8px — symbol↔wordmark (Figma-measured) */
 }
 
 /* "Plus UI" wordmark text (Helvetica Neue fallback stack; single line). */
@@ -74,7 +73,7 @@
 .link {
   display: inline-flex;
   align-items: center;
-  gap: 8px; /* Figma-measured 8px — icon↔label; no --space-8 token exists (pixel fidelity, AAP §0.8) */
+  gap: var(--space-8); /* 8px — icon↔label (Figma-measured) */
   font-family: var(--font-sans);              /* Inter */
   font-weight: var(--font-weight-medium);     /* 500 */
   font-size: var(--font-size-link-sm);        /* 16px */
